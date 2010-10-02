@@ -1,0 +1,19 @@
+/.cvsignore/1.1/Wed May 26 20:32:49 2004//
+/Makefile.am/1.7/Tue Oct  2 19:48:29 2007//
+/basedec.cpp/1.18/Sat Oct 31 10:18:14 2009//
+/basedec.h/1.9/Wed Apr  1 15:57:24 2009//
+/cdrdec.cpp/1.2/Fri Jan 28 16:16:07 2005//
+/cdrdec.h/1.1/Thu Jun 10 00:13:07 2004//
+/crc.c/1.1/Sat Aug 28 14:11:58 2004//
+/crc.h/1.1/Sat Aug 28 14:11:58 2004//
+/flacdec.cpp/1.2/Thu Mar  5 20:59:22 2009//
+/flacdec.h/1.1/Wed Sep 19 19:55:42 2007//
+/mp3dec.cpp/1.17/Mon May 19 14:07:50 2008//
+/mp3dec.h/1.8/Tue Sep 14 15:22:21 2004//
+/oggdec.cpp/1.16/Sat Mar 28 14:35:09 2009//
+/oggdec.h/1.8/Tue Sep 14 15:22:21 2004//
+/tag.c/1.1/Sat Aug 28 14:11:58 2004//
+/tag.h/1.1/Sat Aug 28 14:11:58 2004//
+/wavdec.cpp/1.10/Sat Mar 28 14:35:09 2009//
+/wavdec.h/1.5/Tue Sep 14 15:22:21 2004//
+D

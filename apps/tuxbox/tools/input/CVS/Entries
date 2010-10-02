@@ -1,0 +1,15 @@
+/.cvsignore/1.1/Sun Jun 27 17:43:16 2010//
+/Makefile.am/1.1/Thu Dec 31 14:52:03 2009//
+/color.h/1.1/Thu Dec 31 14:52:03 2009//
+/gfx.c/1.1/Thu Dec 31 14:52:03 2009//
+/gfx.h/1.1/Thu Dec 31 14:52:03 2009//
+/input.c/1.1/Thu Dec 31 14:52:03 2009//
+/input.h/1.1/Thu Dec 31 14:52:03 2009//
+/inputd.c/1.1/Thu Dec 31 14:52:03 2009//
+/inputd.h/1.1/Thu Dec 31 14:52:03 2009//
+/io.c/1.1/Thu Dec 31 14:52:03 2009//
+/io.h/1.2/Mon Jan 18 19:20:32 2010//
+/readme.txt/1.1/Thu Dec 31 14:52:03 2009//
+/text.c/1.1/Thu Dec 31 14:52:03 2009//
+/text.h/1.1/Thu Dec 31 14:52:03 2009//
+D

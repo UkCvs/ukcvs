@@ -1,0 +1,16 @@
+/.cvsignore/1.1/Sat Aug 30 17:57:02 2008//
+/Makefile.am/1.2/Sat Aug 30 18:11:16 2008//
+/bouquetID.h/1.2/Tue Jun  9 15:56:23 2009//
+/caSystemID.h/1.2/Tue Jun  9 15:56:23 2009//
+/cpSystemID.h/1.2/Tue Jun  9 15:56:23 2009//
+/dataBroadcastID.h/1.2/Tue Jun  9 15:56:23 2009//
+/mhpAITDescriptors.h/1.2/Tue Jun  9 15:56:23 2009//
+/mhpApplicationTypeID.h/1.2/Tue Jun  9 15:56:23 2009//
+/mhpOrganisationID.h/1.2/Tue Jun  9 15:56:23 2009//
+/mhpProtocolID.h/1.2/Tue Jun  9 15:56:23 2009//
+/networkID.h/1.2/Tue Jun  9 15:56:23 2009//
+/originalNetworkID.h/1.2/Tue Jun  9 15:56:23 2009//
+/platformID.h/1.2/Tue Jun  9 15:56:23 2009//
+/privateDataSpecifierID.h/1.2/Tue Jun  9 15:56:23 2009//
+/rootOfTrustID.h/1.1/Sat Aug 30 17:31:27 2008//
+D
