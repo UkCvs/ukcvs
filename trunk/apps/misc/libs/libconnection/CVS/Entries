@@ -1,0 +1,13 @@
+/.cvsignore/1.1/Sat Jan 25 18:50:15 2003//
+/Makefile.am/1.5/Mon Feb 24 14:05:02 2003//
+/basicclient.cpp/1.17/Thu Apr  8 07:19:00 2004//
+/basicclient.h/1.8/Tue Feb 24 19:09:06 2009//
+/basicmessage.h/1.2/Fri Oct 18 11:56:56 2002//
+/basicserver.cpp/1.12/Wed Feb 18 17:47:21 2009//
+/basicserver.h/1.7/Thu Apr  8 07:19:00 2004//
+/basicsocket.cpp/1.5/Sat Mar 28 13:49:22 2009//
+/basicsocket.h/1.3/Wed Feb 18 17:47:21 2009//
+/messagetools.cpp/1.1/Sat Dec  7 13:37:06 2002//
+/messagetools.h/1.1/Sat Dec  7 13:37:06 2002//
+/tuxbox-connection.pc.in/1.2/Fri Dec 13 21:59:21 2002//
+D

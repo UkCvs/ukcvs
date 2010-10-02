@@ -1,0 +1,14 @@
+Archive
+Makefile
+Makefile.am.local
+Makefile-archive
+aclocal.m4
+autom4te.cache
+config.log
+config.status
+configure
+linux-*
+rules-downcheck.pl
+config.guess
+config.sub
+ltmain.sh

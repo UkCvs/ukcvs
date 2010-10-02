@@ -1,0 +1,16 @@
+/.cvsignore/1.2/Thu Feb  7 21:20:22 2002//
+/Makefile.am/1.25/Wed Nov 15 21:16:06 2006//
+/dmfp.cpp/1.2/Thu May 27 21:00:52 2004//
+/econfig.cpp/1.17/Tue Feb  3 18:53:44 2009//
+/elock.cpp/1.4/Tue Oct 15 23:26:31 2002//
+/file_eraser.cpp/1.1/Fri Dec  3 00:35:18 2004//
+/http_dyn.cpp/1.13/Tue Feb  3 18:53:44 2009//
+/http_file.cpp/1.24/Tue Feb  3 18:53:44 2009//
+/httpd.cpp/1.31/Sat Feb 21 15:28:47 2009//
+/info.cpp/1.42/Tue Feb  3 18:53:44 2009//
+/init.cpp/1.7/Sun Sep  7 00:03:46 2003//
+/math.cpp/1.1/Wed Nov 15 21:16:06 2006//
+/mktime.c/1.7/Fri Jul 23 15:58:25 2004//
+/nconfig.cpp/1.8/Fri Nov 26 02:05:16 2004//
+/xmlrpc.cpp/1.17/Tue Feb  3 18:53:44 2009//
+D
