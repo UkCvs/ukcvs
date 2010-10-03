@@ -3008,7 +3008,7 @@ void leaveStandby(void)
 
 	switch (frontend->getInfo()->type) {
 		case FE_QPSK:
-			frontend->setCurrentSatellitePosition(config.getInt32("lastSatellitePosition", 192));
+			frontend->setCurrentSatellitePosition(config.getInt32("lastSatellitePosition"));
 			frontend->setDiseqcRepeats(config.getInt32("diseqcRepeats", 0));
 			motorRotationSpeed = config.getInt32("motorRotationSpeed", 18); // default: 1.8 degrees per second
 			diseqcType = (diseqc_t)config.getInt32("diseqcType", NO_DISEQC);
