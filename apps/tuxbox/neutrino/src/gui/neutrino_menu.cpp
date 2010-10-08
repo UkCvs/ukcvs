@@ -291,7 +291,7 @@ void CNeutrinoApp::InitMainMenu(CMenuWidget &mainMenu, CMenuWidget &mainSettings
 	personalize->addItem(mainSettings, LOCALE_MAINSETTINGS_MISC, true, NULL, new CMiscMenue(LOCALE_MAINMENU_SETTINGS), NULL, CRCInput::RC_yellow, NEUTRINO_ICON_BUTTON_YELLOW, false, g_settings.personalize_misc);
 	
 	// personalize
-	shortcut2 += personalize->addItem(mainSettings, LOCALE_PERSONALIZE_HEAD, true, NULL, new CPersonalizeGui(), NULL, CRCInput::RC_setup, NEUTRINO_ICON_BUTTON_DBOX, NULL, false, CPersonalizeGui::PERSONALIZE_MODE_VISIBLE, g_settings.personalize_pinstatus);status);
+	shortcut2 += personalize->addItem(mainSettings, LOCALE_PERSONALIZE_HEAD, true, NULL, new CPersonalizeGui(), NULL, CRCInput::RC_setup, NEUTRINO_ICON_BUTTON_DBOX, NULL, false, CPersonalizeGui::PERSONALIZE_MODE_VISIBLE, g_settings.personalize_pinstatus);
 
 	delete personalize ;
 }
