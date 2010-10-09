@@ -204,17 +204,10 @@ data/htdocs/stylesheets/Makefile
 data/pictures/Makefile
 data/pictures/chk_stone/Makefile
 data/pictures/chk_stone/mainmenu/Makefile
-data/pictures/chk_silver/Makefile
-data/pictures/chk_silver/mainmenu/Makefile
-data/pictures/chk_v2/Makefile
 data/pictures/countries/Makefile
-data/pictures/neutrino/Makefile
 data/pictures/mainmenu/Makefile
 data/pictures/shortcut/Makefile
 data/pictures/keypics/Makefile
-data/pictures/small/Makefile
-data/pictures/carbon/Makefile
-data/pictures/blueqt/Makefile
 data/resources/Makefile
 data/skins/Makefile
 data/sysconfig/Makefile

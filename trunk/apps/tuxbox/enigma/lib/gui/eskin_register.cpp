@@ -27,7 +27,7 @@ public:
 			?
 				TUXBOXDATADIR "/enigma/skins/small_red.esml"
 			:
-				TUXBOXDATADIR "/enigma/skins/stone.esml";
+				TUXBOXDATADIR "/enigma/skins/stone_snr.esml";
 
 		eString skinfile=defaultSkin;
 
