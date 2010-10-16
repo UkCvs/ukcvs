@@ -3143,6 +3143,9 @@ void eZapMain::standbyRelease()
 			case 4: // reboot
 					eZap::getInstance()->quit(4);
 					break;
+			case 5: //Enigmarestart
+					eZap::getInstance()->quit(2);
+					break;
 			case 1: // shutdown
 /*				if (handleState())*/
 					eZap::getInstance()->quit();
@@ -8081,6 +8084,7 @@ eSleepTimerContextMenu::eSleepTimerContextMenu( eWidget* lcdTitle, eWidget *lcdE
 			new eListBoxEntryText(&list, _("restart"), (void*)4, 0, _("restart your dbox-2"));
 			break;
 	}
+	new eListBoxEntryText(&list, _("Enigma restart"), (void*)5, 0, _("Restart Enigma!"));
 	new eListBoxEntryTextSeparator(&list, eSkin::getActive()->queryImage("listbox.separator"), 0, true );
 	new eListBoxEntryText(&list, _("goto standby"), (void*)2, 0, _("goto standby mode") );
 	new eListBoxEntryText(&list, _("set sleeptimer"), (void*)3, 0, _("set a sleep timer"));
@@ -8100,9 +8104,11 @@ eShutdownStandbySelWindow::eShutdownStandbySelWindow(eWidget *parent, int len, i
 {
 	num = new eNumber( parent, len, min, max, maxdigits, init, isactive, descr, grabfocus, deco );
 	Shutdown = CreateSkinnedCheckbox("shutdown");
+	RestartEnigma = CreateSkinnedCheckbox("resenig");
 	Standby = CreateSkinnedCheckbox("standby");
 	set = CreateSkinnedButton("set");
 	CONNECT( num->selected, eShutdownStandbySelWindow::fieldSelected );
+	CONNECT( RestartEnigma->checked, eShutdownStandbySelWindow::ResEnigma );
 	CONNECT( Shutdown->checked, eShutdownStandbySelWindow::ShutdownChanged );
 	CONNECT( Standby->checked, eShutdownStandbySelWindow::StandbyChanged );
 }
@@ -8117,6 +8123,12 @@ void eShutdownStandbySelWindow::ShutdownChanged( int checked )
 {
 	if ( checked )
 		Standby->setCheck( 0 );
+}
+
+void eShutdownStandbySelWindow::ResEnigma( int checked )
+{
+	if ( checked )
+		RestartEnigma->setCheck( 0 );
 }
 
 int eShutdownStandbySelWindow::getCheckboxState()
