@@ -704,9 +704,10 @@ public:
 class eShutdownStandbySelWindow: public eWindow
 {
 protected:
-	eCheckbox *Standby, *Shutdown;
+	eCheckbox *Standby, *Shutdown, *RestartEnigma;
 	void StandbyChanged(int);
 	void ShutdownChanged(int);
+	void ResEnigma(int);
 	void fieldSelected(int *){focusNext(eWidget::focusDirNext);}
 	virtual void setPressed()=0;
 	eButton *set;
