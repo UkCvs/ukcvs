@@ -278,6 +278,7 @@
 		<value name="eWindow.titleOffsetTop" value="0" />
 		<value name="eWindow.titleHeight" value="0" />
 		<value name="fontsize" value="23" />
+		<value name="date.format" value="0" />
 	</values>
 
 	<images basepath="chk_stone" target="fb">	
@@ -433,8 +434,10 @@
 			<eLabel position="69:2" size="83:22" font="Blue.Regular;30" name="ch_number"  backgroundColor="dark" foregroundColor="white" />
 
 			<eLabel position="69:30" size="427:26" font="Blue.Regular;32" name="ch_name" backgroundColor="dark" foregroundColor="white" vcenter="on" />
+			
+			<eLabel position="434:30" size="427:26" font="Blue.Regular;20" name="date" backgroundColor="dark" foregroundColor="white" vcenter="on" />
 
-			<eLabel position="575:10" size="66:30" font="Blue.Bold;34" name="time" align="center"  backgroundColor="content" foregroundColor="white" />
+			<eLabel position="575:10" size="66:30" font="Blue.Bold;34" name="time" align="center" foregroundColor="white" />
 
 			<eLabel text="SNR:" position="195:2" size="40:18" name="snr_text" font="Blue.Regular;22" />
 			<eLabel text="AGC:" position="275:2" size="40:18" name="agc_text" font="Blue.Regular;22" />
@@ -482,14 +485,14 @@
 
 			<eWidget name="dvbInfoBar" position="210:68" size="433:57">
 				<!--Zeilen  -->
-				<eLabel position="0:0" size="55:30" font="Nimbus;22" name="e_now_time" backgroundColor="content" foregroundColor="white" />
-				<eLabel position="0:30" size="55:30" font="Nimbus;22" name="e_next_time" backgroundColor="content" foregroundColor="white" />
+				<eLabel position="0:0" size="55:30" font="Nimbus;22" name="e_now_time" foregroundColor="white" />
+				<eLabel position="0:30" size="55:30" font="Nimbus;22" name="e_next_time" foregroundColor="white" />
 
-				<eLabel position="63:0" size="282:30" font="Blue.Regular;29" name="e_now_title" backgroundColor="content" foregroundColor="white" />
-				<eLabel position="63:30" size="282:30" font="Blue.Regular;29" name="e_next_title" backgroundColor="content" foregroundColor="white" />
+				<eLabel position="63:0" size="282:30" font="Blue.Regular;29" name="e_now_title" foregroundColor="white" />
+				<eLabel position="63:30" size="282:30" font="Blue.Regular;29" name="e_next_title" foregroundColor="white" />
 
-				<eLabel position="345:0" size="70:26" font="Blue.Regular;26" name="e_now_duration" align="right" backgroundColor="content" foregroundColor="white" />
-				<eLabel position="345:30" size="70:26" font="Blue.Regular;26" name="e_next_duration" align="right" backgroundColor="content" foregroundColor="white" />
+				<eLabel position="345:0" size="70:26" font="Blue.Regular;26" name="e_now_duration" align="right" foregroundColor="white" />
+				<eLabel position="345:30" size="70:26" font="Blue.Regular;26" name="e_next_duration" align="right" foregroundColor="white" />
 			</eWidget>
 
 			<eWidget name="fileInfoBar" position="210:68" size="433:57">
@@ -500,3 +503,4 @@
 	</object>
 
 </eskin>
+
