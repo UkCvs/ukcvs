@@ -1786,6 +1786,7 @@ void eZapMain::init_main()
 	lber_text->setText("BER:");
 // SNR Patch
 
+	ASSIGN(date, eLabel, "date");
 	ASSIGN(ChannelNumber, eLabel, "ch_number");
 	ASSIGN(ChannelName, eLabel, "ch_name");
 
@@ -7067,7 +7068,58 @@ void eZapMain::clockUpdate()
 			lcdmain.lcdStandby->Clock->setText(s);
 		}
 #endif
-	} else
+
+		int x = eSkin::getActive()->queryValue("date.format", 0);
+		int y = eSkin::getActive()->queryValue("date.format.year", 0);
+		eString screening_date = "";
+		char timestamp[256];
+		switch (x)
+		{
+			case 0:
+				strftime(timestamp, sizeof(timestamp), "%a %d %b %Y", localtime(&c));
+				break;
+			case 1:
+				strftime(timestamp, sizeof(timestamp), "%A, %d. %B", localtime(&c));
+				break;
+			case 2:
+				strftime(timestamp, sizeof(timestamp), "%a, %d.%m", localtime(&c));
+				break;
+			case 3:
+				strftime(timestamp, sizeof(timestamp), "%a, %d. %b", localtime(&c));
+				break;
+			case 4:
+				strftime(timestamp, sizeof(timestamp), "%d.%m", localtime(&c));
+				break;
+			default:
+				break;
+					
+		}
+		screening_date = timestamp;
+		if (y)
+		{
+			char timestamp2[256];
+			switch (y)
+			{
+				case 1:
+					strftime(timestamp2, sizeof(timestamp2), " %Y", localtime(&c));
+					break;				
+				case 2:
+					strftime(timestamp2, sizeof(timestamp2), " %y", localtime(&c));
+					break;				
+				default:
+					break;
+			}
+			screening_date += timestamp2;
+		}
+		date->setText(screening_date);		
+#ifndef DISABLE_LCD
+		{
+			lcdmain.lcdStandby->date->setText(screening_date);
+		}
+#endif
+	}
+
+	 else
 	{
 		Clock->setText("--:--");
 		clocktimer.start(60000);
