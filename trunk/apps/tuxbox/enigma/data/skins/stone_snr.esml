@@ -433,9 +433,9 @@
 			<!--texte         -->
 			<eLabel position="69:2" size="83:22" font="Blue.Regular;30" name="ch_number"  backgroundColor="dark" foregroundColor="white" />
 
-			<eLabel position="69:30" size="427:26" font="Blue.Regular;32" name="ch_name" backgroundColor="dark" foregroundColor="white" vcenter="on" />
+			<eLabel position="69:30" size="360:26" font="Blue.Regular;32" name="ch_name" backgroundColor="dark" foregroundColor="white" vcenter="on" />
 			
-			<eLabel position="434:30" size="427:26" font="Blue.Regular;20" name="date" backgroundColor="dark" foregroundColor="white" vcenter="on" />
+			<eLabel position="434:30" size="130:26" font="Blue.Regular;20" name="date" backgroundColor="dark" foregroundColor="white" vcenter="on" />
 
 			<eLabel position="575:10" size="66:30" font="Blue.Bold;34" name="time" align="center" foregroundColor="white" />
 
