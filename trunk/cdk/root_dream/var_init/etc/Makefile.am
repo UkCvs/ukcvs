@@ -1,4 +1,4 @@
-SUBDIRS = network init.d
+SUBDIRS = network init.d icon
 
 FILES_FLASH_RO = \
 	group hostname hosts passwd smb.conf

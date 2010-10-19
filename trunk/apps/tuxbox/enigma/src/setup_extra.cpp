@@ -52,6 +52,14 @@ void eExpertSetup::init_eExpertSetup()
 {
 	cmove(ePoint(135, 100));
 
+	int showlogo=0;
+	if ( eConfig::getInstance()->getKey("/ezap/extra/showlogo", showlogo) )
+		eConfig::getInstance()->setKey("/ezap/extra/showlogo", showlogo);
+
+	int logChannelName=0;
+	if ( eConfig::getInstance()->getKey("/ezap/extra/logChannelName", logChannelName) )
+		eConfig::getInstance()->setKey("/ezap/extra/logChannelName", logChannelName);
+
 	int lockWebIf=1;
 	if ( eConfig::getInstance()->getKey("/ezap/webif/lockWebIf", lockWebIf) )
 		eConfig::getInstance()->setKey("/ezap/webif/lockWebIf", lockWebIf);

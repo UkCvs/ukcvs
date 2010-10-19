@@ -1717,6 +1717,7 @@ root_dream/share/udhcpc/Makefile
 root_dream/var_init/Makefile
 root_dream/var_init/etc/Makefile
 root_dream/var_init/etc/init.d/Makefile
+root_dream/var_init/etc/icon/Makefile
 root_dream/var_init/etc/network/Makefile
 root_dream/var_init/tuxbox/Makefile
 root_dream/var_init/tuxbox/config/Makefile

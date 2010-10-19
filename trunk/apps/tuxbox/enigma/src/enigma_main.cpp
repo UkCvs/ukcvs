@@ -1789,6 +1789,7 @@ void eZapMain::init_main()
 	ASSIGN(date, eLabel, "date");
 	ASSIGN(ChannelNumber, eLabel, "ch_number");
 	ASSIGN(ChannelName, eLabel, "ch_name");
+	ASSIGN(ChannelIcon, eLabel, "ch_icon");
 
 	ASSIGN(EINow, eLabel, "e_now_title");
 	ASSIGN(EINext, eLabel, "e_next_title");
@@ -6605,6 +6606,7 @@ void eZapMain::showEPG_Streaminfo()
 void eZapMain::startService(const eServiceReference &_serviceref, int err)
 {
 
+	eString icname="";
 	subtitle->stop();
 	audioselps.clear();
 
@@ -6730,6 +6732,13 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		if (serviceref.getServiceType() == 7)  // linkage service..
 			name+=" - " + serviceref.descr;
 
+		if ( !serviceref.path.length()) {
+			icname=name.c_str();
+			}
+		else {
+			icname="File";
+			}
+
 #ifndef DISABLE_LCD
 		lcdmain.lcdMain->setServiceName(name);
 #endif
@@ -6821,11 +6830,13 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 			name="bla :(";
 
 		ChannelName->setText(name);
+		icname="File";
 #ifndef DISABLE_LCD
 		lcdmain.lcdMain->setServiceName(name);
 #endif
 		if (service && service->id3)
 		{
+			icname="MP3";
 			std::map<eString,eString> &tags = service->id3->getID3Tags();
 			eString artist="unknown artist", album="unknown album", title="", num="";
 			if (tags.count("TALB"))
@@ -6844,6 +6855,11 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		}
 	}
 #endif // DISABLE_FILE
+	int showlogo=0;
+	eConfig::getInstance()->getKey("/ezap/extra/showlogo", showlogo);
+	if ( showlogo == 1 )
+		showServiceIcon(icname);
+
 	int showosd = 1;
 	eConfig::getInstance()->getKey("/ezap/osd/showOSDOnSwitchService", showosd );
 	if (showosd)
@@ -6861,6 +6877,53 @@ void eZapMain::startService(const eServiceReference &_serviceref, int err)
 		timeout.start((sapi->getState() == eServiceHandler::statePlaying) ?
 			(timeoutInfobar * 1000) - 1000 :
 			2000, 1);
+	}
+}
+
+void eZapMain::showServiceIcon(eString logo_file)
+{
+	eString logofile;
+	eString cmd;
+	
+	logo_file=convertUTF8DVB(logo_file);
+	logofile = LOGO_DIR;
+	logo_file.strReplace("⤠","");
+	logo_file.strReplace("⤡","");
+	logofile += logo_file;
+	logofile += ".png";
+
+	gPixmap *img = loadPNG(logofile.c_str());
+	if(img){
+		gPixmap * mp = &gFBDC::getInstance()->getPixmap();
+		gPixmapDC mydc(img);
+		gPainter p(mydc);
+		p.mergePalette(*mp);
+		ChannelIcon->setBlitFlags(BF_ALPHATEST);
+		ChannelIcon->setProperty("align", "left");
+		ChannelIcon->setPixmap(img);
+		ChannelIcon->setPixmapPosition(ePoint(0, 0));
+		}
+	else {
+		logofile = LOGO_DIR;
+		logofile += "default.png";
+		gPixmap *img = loadPNG(logofile.c_str());
+		if(img) {
+			gPixmap * mp = &gFBDC::getInstance()->getPixmap();
+			gPixmapDC mydc(img);
+			gPainter p(mydc);
+			p.mergePalette(*mp);
+			ChannelIcon->setBlitFlags(BF_ALPHATEST);
+			ChannelIcon->setProperty("align", "left");
+			ChannelIcon->setPixmap(img);
+			ChannelIcon->setPixmapPosition(ePoint(1, 1));
+		}
+
+		int logChannelName=0;
+		eConfig::getInstance()->getKey("/ezap/extra/logChannelName", logChannelName);
+		if ( logChannelName == 1){
+			cmd.sprintf("echo 'Missing logo for %s'  >> /tmp/MissingServiceLogo",logo_file.c_str());
+			system(cmd.c_str());
+			}
 	}
 }
 
