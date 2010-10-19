@@ -41,6 +41,8 @@ void eOSDExpertSetup::init_eOSDExpertSetup()
 	CONNECT((new eListBoxEntryCheck(&list,_("Serviceselector help buttons"),"/ezap/serviceselector/showButtons",_("show colored help buttons in service selector")))->selected, eOSDExpertSetup::colorbuttonsChanged );
 	if ( eSystemInfo::getInstance()->getFEType() == eSystemInfo::feSatellite)
 		new eListBoxEntryCheck(&list, _("Show Sat position"), "/extras/showSatPos", _("show sat position in the infobar"));
+	new eListBoxEntryCheck(&list, _("Show service logo"), "/ezap/extra/showlogo", _("show service logo in infobar"));
+	new eListBoxEntryCheck(&list, _("Log service name"), "/ezap/extra/logChannelName", _("log service name in /tmp/MissingServiceLogo if logo is missing"));
 	new eListBoxEntryCheck(&list, _("Skip confirmations"), "/elitedvb/extra/profimode", _("enable/disable confirmations"));
 	new eListBoxEntryCheck(&list, _("Hide error windows"), "/elitedvb/extra/hideerror", _("don't show zap error messages"));
 	new eListBoxEntryCheck(&list, _("Auto show Infobar"), "/ezap/osd/showOSDOnEITUpdate", _("always show infobar when new event info is avail"));

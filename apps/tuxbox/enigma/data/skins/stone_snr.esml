@@ -431,11 +431,13 @@
 			<eLabel position="0:0" size="720:151" pixmap="info-bg" name="info-bg" />
 
 			<!--texte         -->
+			<eLabel position="60:94" size="70:53" name="ch_icon" backgroundColor="content" alphatest="on" />
+			
 			<eLabel position="69:2" size="83:22" font="Blue.Regular;30" name="ch_number"  backgroundColor="dark" foregroundColor="white" />
 
-			<eLabel position="69:30" size="360:26" font="Blue.Regular;32" name="ch_name" backgroundColor="dark" foregroundColor="white" vcenter="on" />
+			<eLabel position="69:30" size="350:26" font="Blue.Regular;32" name="ch_name" backgroundColor="dark" foregroundColor="white" vcenter="on" />
 			
-			<eLabel position="434:30" size="130:26" font="Blue.Regular;20" name="date" backgroundColor="dark" foregroundColor="white" vcenter="on" />
+			<eLabel position="418:30" size="120:26" font="Blue.Regular;20" name="date" backgroundColor="dark" foregroundColor="white" vcenter="on" />
 
 			<eLabel position="575:10" size="66:30" font="Blue.Bold;34" name="time" align="center" foregroundColor="white" />
 
@@ -493,6 +495,7 @@
 
 				<eLabel position="345:0" size="70:26" font="Blue.Regular;26" name="e_now_duration" align="right" foregroundColor="white" />
 				<eLabel position="345:30" size="70:26" font="Blue.Regular;26" name="e_next_duration" align="right" foregroundColor="white" />
+
 			</eWidget>
 
 			<eWidget name="fileInfoBar" position="210:68" size="433:57">
