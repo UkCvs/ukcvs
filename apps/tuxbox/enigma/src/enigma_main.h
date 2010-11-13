@@ -26,6 +26,7 @@
 #include <src/epgsearch.h>
 #include <lib/gdi/gfbdc.h>
 #include <lib/gdi/epng.h>
+#include <lib/gui/egauge.h>
 
 #define LOGO_DIR "/var/etc/icon/"
 
@@ -345,6 +346,9 @@ public:
 	enum { messageGoSleep=2, messageShutdown, messageNoRecordSpaceLeft, messageWakeUp, messageCheckVCR };
 	enum { pathBouquets=1, pathProvider=2, pathRecordings=4, pathPlaylist=8, pathAll=16, pathRoot=32, pathSatellites=64 };
 	enum { listAll, listSatellites, listProvider, listBouquets };
+
+	eGauge *GaugeHour, *GaugeMinute, *GaugeSeconds;
+
 private:
 	eLabel 	*ChannelNumber, *ChannelName, *Clock, *date, *ChannelIcon,
 		*lsnr_num, *lsync_num, *lber_num, *lsnr_text, *lagc_text, *lber_text,

@@ -51,6 +51,7 @@
 #include <lib/gui/ebutton.h>
 #include <lib/gui/actions.h>
 #include <lib/gui/echeckbox.h>
+#include <lib/gui/egauge.h>
 #include <lib/driver/rc.h>
 #include <lib/driver/streamwd.h>
 #include <lib/driver/eavswitch.h>
@@ -1785,6 +1786,12 @@ void eZapMain::init_main()
 	lagc_text->setText("AGC:");
 	lber_text->setText("BER:");
 // SNR Patch
+
+// Analogue Clock
+
+	ASSIGN(GaugeHour, eGauge, "g_hour");
+	ASSIGN(GaugeMinute, eGauge, "g_Minute");
+	ASSIGN(GaugeSeconds, eGauge, "g_Seconds");
 
 	ASSIGN(date, eLabel, "date");
 	ASSIGN(ChannelNumber, eLabel, "ch_number");
@@ -7113,9 +7120,19 @@ void eZapMain::clockUpdate()
 	tm *t=localtime(&c);
 	if (t && eDVB::getInstance()->time_difference)
 	{
+		int h_gau,m_gau;
+		h_gau= t->tm_hour;
+		if ( (t->tm_hour) >12)
+		h_gau-=-12;
+		m_gau=(t->tm_min*5/36);
+		GaugeSeconds->setPerc(t->tm_sec*100/60);
+		GaugeMinute->setPerc(t->tm_min*100/60);
+		GaugeHour->setPerc((h_gau*100/12)+m_gau);
+		GaugeSeconds->setPerc(t->tm_sec*100/60);
+
 		eString s;
 		s.sprintf("%02d:%02d", t->tm_hour, t->tm_min);
-		clocktimer.start((70-t->tm_sec)*1000);
+		clocktimer.start((100-t->tm_sec)*10);
 		Clock->setText(s);
 
 		if( !eSystemInfo::getInstance()->hasLCD()
