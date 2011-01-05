@@ -224,7 +224,7 @@ option(`CONFIG_NICE', `y', `y')
 option(`CONFIG_NOHUP', `n', `n')
 option(`CONFIG_OD', `n', `n')
 option(`CONFIG_PRINTENV', `n', `n')
-option(`CONFIG_PRINTF', `n', `n')
+option(`CONFIG_PRINTF', `y', `y')
 option(`CONFIG_PWD', `y', `n')
 # CONFIG_READLINK is not set
 # CONFIG_FEATURE_READLINK_FOLLOW is not set
