@@ -197,7 +197,7 @@ void ShowUsage(void)
 	printf("    layout                : format-string\n");
 	printf("                            #=numeric @=alphanumeric\n");
 	printf("Options:\n");
-	printf("    t=\"Window-Title\"      : specify title of window [default \"Eingabe\"]\n");
+	printf("    t=\"Window-Title\"      : specify title of window [default \"Input\"]\n");
 	printf("    d=\"Defaults\"          : default values\n");
 	printf("    k=1/0                 : show the keyboard layout [default 0]\n");
 	printf("    f=1/0                 : show frame around edit fields [default 1]\n");
@@ -214,7 +214,7 @@ void ShowUsage(void)
 int main (int argc, char **argv)
 {
 int tv,cols=25,debounce=25,tmo=0;
-char ttl[]="Eingabe";
+char ttl[]="Input";
 int dloop=1,keys=0,frame=1,mask=0,bhelp=0;
 char *title=NULL, *format=NULL, *defstr=NULL, *aptr, *rptr; 
 unsigned int alpha;

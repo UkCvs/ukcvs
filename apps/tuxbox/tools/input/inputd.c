@@ -46,7 +46,7 @@
 
 char rstr[512],tstr[512], *format, *estr;
 int epos=-1,cpos=0,kpos=0,cnt,first=1,hex=0;
-char kcod[10][13]={"0 _.:,;$@()#","1-+*/", "2abcä", "3def", "4ghi", "5jkl", "6mnoö", "7pqrs", "8tuvü", "9wxyz"};
+char kcod[10][13]={"0 _.:,;$@()#","1-+*/", "2abc", "3def", "4ghi", "5jkl", "6mno", "7pqrs", "8tuv", "9wxyz"};
 char hcod[10][13]={"0","1", "2abc", "3def", "4", "5", "6", "7", "8", "9"};
 static unsigned rc,sc[8]={'a','o','u','A','O','U','z','d'}, tc[8]={'ä','ö','ü','Ä','Ö','Ü','ß','°'};
 extern int radius;
@@ -289,7 +289,7 @@ char trnd[2]={0,0},tch;
 int act_key=-1, last_key=-1, b_key=-1, run=1, ipos=0;
 time_t t1,t2,tm1;
 char knum[12][2]={"1","2","3","4","5","6","7","8","9"," ","0"};
-char kalp[12][5]={"+-*/","abcä","def","ghi","jkl","mnoö","pqrs","tuvü","wxyz","","_,.;"};
+char kalp[12][5]={"+-*/","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz","","_,.;"};
 
 	epos=-1;
 	cpos=0;
@@ -387,9 +387,9 @@ char kalp[12][5]={"+-*/","abcä","def","ghi","jkl","mnoö","pqrs","tuvü","wxyz",""
 			}
 		}	
 		RenderCircle(bxs,wys+wyw-ybrd-8,'R');
-		RenderString("Groß/Klein",bxs+15,wys+wyw-ybrd+5,3*bxsz,LEFT,SMALL,CMCIT);
-		RenderCircle(bxs+3*bxsz-GetStringLen("löschen")-15,wys+wyw-ybrd-8,'Y');
-		RenderString("löschen",bxs,wys+wyw-ybrd+5,3*bxsz,RIGHT,SMALL,CMCIT);
+		RenderString("big/small",bxs+15,wys+wyw-ybrd+5,3*bxsz,LEFT,SMALL,CMCIT);
+		RenderCircle(bxs+3*bxsz-GetStringLen("delete")-15,wys+wyw-ybrd-8,'Y');
+		RenderString("delete",bxs,wys+wyw-ybrd+5,3*bxsz,RIGHT,SMALL,CMCIT);
 	}
 	
 	while(run)

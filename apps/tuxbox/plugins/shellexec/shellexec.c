@@ -354,7 +354,7 @@ int res=1;
 	}
 	if(cmd && res)
 	{
-		ShowMessage("System-Aktualisierung", "Bitte warten", 0);
+		ShowMessage("System-Processing", "Please wait", 0);
 		system(cmd);
 		ClearKeys();
 	}
@@ -654,7 +654,7 @@ time_t tm1,tm2;
 			}
 			else
 			{
-				sprintf(trstr,"Kein Eintrag");
+				sprintf(trstr,"No Entry");
 			}
 			lcstr=strdup(trstr);
 			lcdptr=lcstr;
@@ -1214,7 +1214,7 @@ FSTRUCT fstr;
 
 	if(showwait && menu.headerwait[menu.act_header] && menu.headertxt[menu.act_header])
 	{
-		ShowMessage(menu.headertxt[menu.act_header],"Bitte warten ...",0);
+		ShowMessage(menu.headertxt[menu.act_header],"Please wait ...",0);
 	}
 	Clear_List(&menu,1);
 	if((fstr.fh[0]=fopen(CFG_FILE,"r"))!=NULL)
@@ -1577,7 +1577,7 @@ static void ShowInfo(MENU *m, int knew )
 			}
 			else
 			{
-				sprintf(g_trstr,"Kein Eintrag");
+				sprintf(g_trstr,"No Entry");
 			}
 			lcstr=strdup(g_trstr);
 			clean_string(g_trstr,lcstr);
@@ -1907,7 +1907,7 @@ unsigned int alpha;
 									}
 									else
 									{
-										ShowMessage(tstr, "Bitte warten", 0);
+										ShowMessage(tstr, "Please wait", 0);
 									}
 								}
 								else
