@@ -1244,15 +1244,15 @@ void CChannelList::paintItem(int pos)
 					// progressbar colors
 					int pb_activeCol , pb_passiveCol ;
 					if (liststart + pos != selected){
-						pb_activeCol = COL_MENUCONTENT_PLUS_3;
-						pb_passiveCol = COL_MENUCONTENT_PLUS_1;
+						pb_activeCol = COL_MENUCONTENTINACTIVE;
+						pb_passiveCol = COL_MENUCONTENT;
 					}
 					else {
-						pb_activeCol = COL_MENUCONTENTSELECTED_PLUS_2;
-						pb_passiveCol = COL_MENUCONTENTSELECTED_PLUS_0;
+						pb_activeCol = COL_MENUCONTENTINACTIVE;
+						pb_passiveCol = COL_MENUCONTENTDARK;
 					}
 					// progressbar 
-					pb.paintProgressBar(x+5+numwidth + title_offset, ypos + fheight/4, pb_space + 2, fheight/2, runningPercent, pb_max, pb_activeCol, pb_passiveCol, pb_activeCol);
+					pb.paintProgressBar(x+5+numwidth + title_offset, ypos + fheight/4, pb_space + 2, fheight/2, runningPercent, pb_max, 0, 0, pb_activeCol, pb_passiveCol);
 				}
 			}
 
