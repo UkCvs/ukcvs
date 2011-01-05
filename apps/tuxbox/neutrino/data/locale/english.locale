@@ -675,6 +675,7 @@ listscroll.exit exit
 listscroll.up up
 mainmenu.audioplayer Audioplayer
 mainmenu.clearsectionsd Clear EPG Cache
+mainmenu.extrasmenu Extras Menu
 mainmenu.games Games
 mainmenu.head Main Menu
 mainmenu.movieplayer Movie Player
@@ -1369,6 +1370,11 @@ streamingmenu.streaming_videorate Datarate Video
 streamingserver.noconnect No connection to streamingserver.\nRecording canceled.
 stringinput.caps caps / no caps
 stringinput.clear clear all
+systeminfo.cpu CPU/Filesystem
+systeminfo.menu System Information
+systeminfo.messages Messages
+systeminfo.performance Performance
+systeminfo.process Memory/Processes
 timer.eventrecord.msg   ... TO be DONE, or not to be done
 timer.eventrecord.title Schedule Record
 timer.eventtimed.msg The event is scheduled.\nThe dbox2 will power on and \nswitch to this channel at the given time.

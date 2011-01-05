@@ -38,6 +38,8 @@ libneutrino_gui_a_SOURCES = \
 	miscsettings_menu.cpp \
 	neutrino_menu.cpp \
 	network_setup.cpp \
+	mainmenu.cpp \
+	systeminfo.cpp \
 	nfs.cpp \
 	osd_setup.cpp \
 	osdlang_setup.cpp \
