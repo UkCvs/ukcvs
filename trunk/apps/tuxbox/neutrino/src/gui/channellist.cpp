@@ -1412,6 +1412,15 @@ CChannelList::CChannel* CChannelList::getChannelFromChannelID(const t_channel_id
 
 // for EPG+  (2004-03-05 rasc, code sent by vivamiga)
 
+//ExtrasMenu
+void CChannelList::ReZap()
+{
+	CChannel* chan = chanlist[selected];
+	g_RemoteControl->zapTo_ChannelID(chan->channel_id, chan->name, !chan->bAlwaysLocked);
+	
+}
+
+
 int CChannelList::getSize() const
 {
 	return this->chanlist.size();
