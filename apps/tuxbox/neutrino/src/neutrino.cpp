@@ -2032,7 +2032,7 @@ int CNeutrinoApp::run(int argc, char **argv)
 	CLocaleManager::loadLocale_ret_t loadLocale_ret = g_Locale->loadLocale(g_settings.language);
 	if (loadLocale_ret == CLocaleManager::NO_SUCH_LOCALE)
 	{
-		strcpy(g_settings.language, "deutsch");	// Fallback if rest fails
+		strcpy(g_settings.language, "english");	// Fallback if rest fails
 		FILE *f = fopen(NEUTRINO_DEFAULTLOCALE_FILE, "r");
 		if (f)
 		{
