@@ -238,7 +238,7 @@ void CBouquetManager::saveBouquets(bool includeBouquetOthers)
 	for (BouquetList::const_iterator it = Bouquets.begin(); it != Bouquets.end(); it++)
 	{
 		// TODO: use locales
-		if (includeBouquetOthers || (((*it) != remainChannels) && (strncmp((*it)->Name.c_str(),"Neue Sender",11) != 0)))
+		if (includeBouquetOthers || (((*it) != remainChannels) && (strncmp((*it)->Name.c_str(),"New Channels",11) != 0)))
 		{
 			//fprintf(bouq_fd, "\t<Bouquet name=\"%s\" hidden=\"%d\" locked=\"%d\">\n",
 			fprintf(bouq_fd, "\t<Bouquet type=\"%01x\" bouquet_id=\"%04x\" name=\"%s\" hidden=\"%01x\" locked=\"%01x\">\n",
@@ -426,7 +426,7 @@ void CBouquetManager::makeBouquetfromCurrentservices(const xmlNodePtr root)
 	xmlNodePtr provider = root->xmlChildrenNode;
 	
 	// TODO: use locales
-	CBouquet* newBouquet = addBouquet("Neue Sender");
+	CBouquet* newBouquet = addBouquet("New Channels");
 			newBouquet->bHidden = false;
 			newBouquet->bLocked = false;
 			
@@ -513,7 +513,7 @@ void CBouquetManager::makeRemainingChannelsBouquet(void)
 	}
 
 	// TODO: use locales
-	remainChannels = addBouquet((Bouquets.size() == 0) ? "Alle Kan\xC3\xA4le" : "Andere"); // UTF-8 encoded
+	remainChannels = addBouquet((Bouquets.size() == 0) ? "All Channels" : "Other"); // UTF-8 encoded
 
 	for (tallchans::iterator it = allchans.begin(); it != allchans.end(); it++)
 		if (chans_processed.find(it->first) == chans_processed.end())
