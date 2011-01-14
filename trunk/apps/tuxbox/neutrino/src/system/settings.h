@@ -584,6 +584,13 @@ class CScanSettings
 
 	int		scanSectionsd;
 
+	int motorRotationSpeed;
+	int useGotoXX;
+	double gotoXXLatitude;
+	double gotoXXLongitude;
+	int gotoXXLaDirection;
+	int gotoXXLoDirection;
+
 	int		scan_mode;
 	int		TP_scan;
 	int		TP_fec;

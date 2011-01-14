@@ -742,6 +742,13 @@ void CZapitClient::setScanMotorPosList( ScanMotorPosList& motorPosList )
 	close_connection();
 }
 
+/* load scansetup configuration*/
+void CZapitClient::loadScanSetupSettings()
+{
+	send(CZapitMessages::CMD_LOADSCANSETTINGS);
+	close_connection();
+}
+
 /* set diseqcType*/
 void CZapitClient::setDiseqcType(const diseqc_t diseqc)
 {
