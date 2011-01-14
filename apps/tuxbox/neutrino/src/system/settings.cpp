@@ -182,10 +182,19 @@ void CScanSettings::toMotorPosList(CZapitClient::ScanMotorPosList& motorPosList)
 void CScanSettings::useDefaults(const delivery_system_t _delivery_system)
 {
 	delivery_system	= _delivery_system;
-	bouquetMode	= CZapitClient::BM_UPDATEBOUQUETS;
+	bouquetMode	= CZapitClient::BM_CREATESATELLITEBOUQUET;
 	scanType	= CZapitClient::ST_ALL;
 	diseqcMode	= NO_DISEQC;
 	diseqcRepeat	= 0;
+	scan_mode	= 1;
+
+	motorRotationSpeed = 8;
+	useGotoXX = 0;
+	gotoXXLatitude = 00.000000;
+	gotoXXLongitude = 00.000000;
+	gotoXXLaDirection = 1;
+	gotoXXLoDirection = 1;
+
 #ifdef HAVE_TRIPLEDRAGON
 	TP_mod		= 0;
 #elif HAVE_DVB_API_VERSION >= 3
@@ -201,7 +210,7 @@ void CScanSettings::useDefaults(const delivery_system_t _delivery_system)
 			strcpy(satNameNoDiseqc, "Kabel Deutschland");
 			break;
 		case DVB_S:
-			strcpy(satNameNoDiseqc, "Astra 19.2E");
+			strcpy(satNameNoDiseqc, "Astra 28.2E");
 			break;
 		case DVB_T:
 			strcpy(satNameNoDiseqc, "");
@@ -229,6 +238,13 @@ bool CScanSettings::loadSettings(const char * const fileName, const delivery_sys
 	scanType=(CZapitClient::scanType) configfile.getInt32("scanType", scanType);
 	strcpy(satNameNoDiseqc, configfile.getString("satNameNoDiseqc", satNameNoDiseqc).c_str());
 
+	motorRotationSpeed = configfile.getInt32("motorRotationSpeed", 8);
+	useGotoXX = configfile.getInt32("useGotoXX", 0);
+	gotoXXLatitude = strtod(configfile.getString("gotoXXLatitude", "00.000000").c_str(), NULL);
+	gotoXXLongitude = strtod(configfile.getString("gotoXXLongitude", "00.000000").c_str(), NULL);
+	gotoXXLaDirection = configfile.getInt32("gotoXXLaDirection", 1);
+	gotoXXLoDirection = configfile.getInt32("gotoXXLoDirection", 1);
+
 	if (1/*diseqcMode != NO_DISEQC*/)
 	{
 		char tmp[20];
@@ -248,7 +264,7 @@ bool CScanSettings::loadSettings(const char * const fileName, const delivery_sys
 			}
 		}
 	}
-	scan_mode = configfile.getInt32("scan_mode", 0);
+	scan_mode = configfile.getInt32("scan_mode", 1);
 	TP_scan = configfile.getInt32("TP_scan", 0);
 	TP_fec = configfile.getInt32("TP_fec", 1);
 	TP_pol = configfile.getInt32("TP_pol", 0);
@@ -262,7 +278,7 @@ bool CScanSettings::loadSettings(const char * const fileName, const delivery_sys
 #endif
 	strcpy(TP_freq, configfile.getString("TP_freq", "10100000").c_str());
 	strcpy(TP_rate, configfile.getString("TP_rate", "27500000").c_str());
-	strncpy(TP_satname, configfile.getString("TP_satname", "Astra 19.2E").c_str(), 30);
+	strncpy(TP_satname, configfile.getString("TP_satname", "Astra 28.2E").c_str(), 30);
 	TP_diseqc = *diseqscOfSat(TP_satname);
 #if HAVE_DVB_API_VERSION >= 3
 	if(TP_fec == 4) TP_fec = 5;
@@ -283,6 +299,16 @@ bool CScanSettings::saveSettings(const char * const fileName)
 	configfile.setInt32( "scanType", scanType );
 	configfile.setString( "satNameNoDiseqc", satNameNoDiseqc );
 	
+	char tempd[12];
+	configfile.setInt32("motorRotationSpeed", motorRotationSpeed);
+	configfile.setInt32("useGotoXX", useGotoXX);
+	sprintf(tempd, "%02.6f", gotoXXLatitude);
+	configfile.setString("gotoXXLatitude", tempd);
+	sprintf(tempd, "%02.6f", gotoXXLongitude);
+	configfile.setString("gotoXXLongitude", tempd);
+	configfile.setInt32("gotoXXLaDirection", gotoXXLaDirection);
+	configfile.setInt32("gotoXXLoDirection", gotoXXLoDirection);
+
 	if (1/*diseqcMode != NO_DISEQC*/)	
 	{
 		char tmp[20];

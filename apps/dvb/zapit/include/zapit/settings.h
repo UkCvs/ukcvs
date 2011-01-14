@@ -32,7 +32,7 @@
 #endif
 
 #define ZAPITCONFIGDIR  	CONFIGDIR "/zapit"
-
+#define SCANCONFIGFILE       	"/var/tuxbox/config/scan.conf"
 #define CONFIGFILE		ZAPITCONFIGDIR "/zapit.conf"
 #define MOTORCONFIGFILE		ZAPITCONFIGDIR "/motor.conf"
 #define SERVICES_XML		ZAPITCONFIGDIR "/services.xml"
