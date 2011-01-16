@@ -314,6 +314,8 @@ struct SNeutrinoSettings
 
 	neutrino_msg_t key_quickzap_up;
 	neutrino_msg_t key_quickzap_down;
+	neutrino_msg_t key_volume_up;
+	neutrino_msg_t key_volume_down;
 	neutrino_msg_t key_bouquet_up;
 	neutrino_msg_t key_bouquet_down;
 	neutrino_msg_t key_subchannel_up;
