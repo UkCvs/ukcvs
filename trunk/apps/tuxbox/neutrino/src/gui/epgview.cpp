@@ -610,7 +610,7 @@ int CEpgData::show(const t_channel_id channel_id, unsigned long long a_id, time_
 
 	if ( epg_done!= -1 )	//show event progressbar
 	{		
- 		CProgressBar pb;
+ 		CProgressBar pb(true, -1, -1, 30, 100, 70, true);
 		pb.paintProgressBarDefault (sx + 10 + widthl + 10 + ((ox-104-widthr-widthl-10-10-20)>>1), sy+oy-height, 104, height-6, epg_done, 104);	
 	}
 

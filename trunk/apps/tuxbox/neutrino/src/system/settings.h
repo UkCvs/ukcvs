@@ -67,6 +67,7 @@ struct SNeutrinoSettings
 	int tuxtxt_cache;
 #endif
 	int virtual_zap_mode;
+	int progressbar_color;
 	int infobar_show;
 	int show_mute_icon;
 	int channellist_epgtext_align_right;

@@ -83,7 +83,7 @@ void CProgressWindow::showGlobalStatus(const unsigned int prog)
 		if (global_progress > max_val)
 			global_progress = max_val;
 	
-		CProgressBar pb;
+		CProgressBar pb(false);
 		pb.paintProgressBarDefault (progressbar_x, globalstatusY, progressbar_w, progressbar_h, global_progress, max_val);
 	}
 		
@@ -105,7 +105,7 @@ void CProgressWindow::showLocalStatus(const unsigned int prog)
 		if (local_progress > max_val)
 			local_progress = max_val;
 	
-	CProgressBar pb;
+	CProgressBar pb(false);
 	pb.paintProgressBarDefault (progressbar_x, localstatusY, progressbar_w, progressbar_h, local_progress, max_val);
 	}
 	

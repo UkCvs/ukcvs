@@ -1199,7 +1199,7 @@ void CChannelList::paintItem(int pos)
 		else
 			snprintf(nameAndDescription, sizeof(nameAndDescription), "%s", ZapitTools::UTF8_to_Latin1(chan->name.c_str()).c_str());
 
-		CProgressBar pb;
+		CProgressBar pb(false); /* never colored */
 		int pb_space = prg_offset - title_offset;
 		int pb_max = pb_space - 4;
 		
