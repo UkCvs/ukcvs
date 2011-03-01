@@ -8568,10 +8568,10 @@ int main(int argc, char **argv)
 		ntp_system_cmd = ntp_system_cmd_prefix + ntpserver;
 
 		//EPG Einstellungen laden
-		secondsToCache = (atoi(ntp_config.getString("epg_cache_time","14").c_str() ) *24*60L*60L); //Tage
-		secondsExtendedTextCache = (atoi(ntp_config.getString("epg_extendedcache_time","6").c_str() ) *60L*60L); //Stunden
+		secondsToCache = (atoi(ntp_config.getString("epg_cache_time","1").c_str() ) *24*60L*60L); //Tage
+		secondsExtendedTextCache = (atoi(ntp_config.getString("epg_extendedcache_time","24").c_str() ) *60L*60L); //Stunden
 		oldEventsAre = (atoi(ntp_config.getString("epg_old_events","1").c_str() ) *60L*60L); //Stunden
-		max_events= atoi(ntp_config.getString("epg_max_events","6000").c_str() );
+		max_events= atoi(ntp_config.getString("epg_max_events","10000").c_str() );
 
 		printf("[sectionsd] Caching max %d events\n", max_events);
 		printf("[sectionsd] Caching %ld days\n", secondsToCache / (24*60*60L));
