@@ -399,6 +399,7 @@ int CNeutrinoApp::loadSetup()
 	g_settings.tuxtxt_cache			= configfile.getBool("tuxtxt_cache"              , false );
 #endif
 	g_settings.virtual_zap_mode		= configfile.getBool("virtual_zap_mode"          , true);
+	g_settings.progressbar_color		= configfile.getBool("progressbar_color"	, true );
 	g_settings.infobar_show			= configfile.getInt32("infobar_show"             , 0);
 	g_settings.show_mute_icon		= configfile.getInt32("show_mute_icon"		,1);
 	g_settings.channellist_epgtext_align_right		= configfile.getBool("channellist_epgtext_align_right"          , false);
@@ -978,6 +979,7 @@ void CNeutrinoApp::saveSetup()
 	configfile.setBool("tuxtxt_cache"              , g_settings.tuxtxt_cache);
 #endif
 	configfile.setBool("virtual_zap_mode"          , g_settings.virtual_zap_mode);
+	configfile.setBool("progressbar_color"		, g_settings.progressbar_color);
 	configfile.setInt32("infobar_show"             , g_settings.infobar_show);
 	configfile.setInt32("show_mute_icon"			, g_settings.show_mute_icon);
 	configfile.setBool("channellist_epgtext_align_right"                 , g_settings.channellist_epgtext_align_right);

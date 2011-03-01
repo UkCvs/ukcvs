@@ -270,7 +270,9 @@ void COsdSetup::showOsdSetup()
 		CMenuForwarder *osd_menucolor_fw = new CMenuForwarder(LOCALE_OSDSETTINGS_COLORMENU_MENUCOLORS, true, NULL, this, "show_menue_color_setup", CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED);
 		//osd infobar setup forwarder
 		CMenuForwarder *osd_sbcolor_fw = new CMenuForwarder(LOCALE_OSDSETTINGS_COLORMENU_STATUSBAR, true, NULL, this, "show_infobar_color_setup", CRCInput::RC_green, NEUTRINO_ICON_BUTTON_GREEN);
-		//osd timeout setup forwarder
+		//osd progressbar color
+		CMenuOptionChooser *osd_pbcolor_ch = new CMenuOptionChooser(LOCALE_OSDSETTINGS_COLORMENU_PROGRESSBAR, &g_settings.progressbar_color, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true, NULL, CRCInput::RC_yellow, NEUTRINO_ICON_BUTTON_YELLOW);
+	//osd timeout setup forwarder
 	CMenuForwarder *osd_timeout_fw = new CMenuForwarder(LOCALE_TIMING_HEAD, true, NULL,  this, "show_timeout_setup", CRCInput::RC_blue, NEUTRINO_ICON_BUTTON_BLUE);
 	//osd screen setup
 	CMenuForwarder *osd_screen_fw = new CMenuForwarder(LOCALE_VIDEOMENU_SCREENSETUP, true, NULL, new CScreenSetup(), NULL, CRCInput::RC_1, NEUTRINO_ICON_BUTTON_1);
@@ -307,6 +309,7 @@ void COsdSetup::showOsdSetup()
 		osd_setup_colors->addItem(GenericMenuSeparatorLine);
 		osd_setup_colors->addItem(osd_menucolor_fw);	//menue colors
 		osd_setup_colors->addItem(osd_sbcolor_fw);	//infobar colors
+		osd_setup_colors->addItem(osd_pbcolor_ch);	//progressbar colors
 	osd_setup->addItem(osd_timeout_fw);	//timeout
 	osd_setup->addItem(GenericMenuSeparatorLine);
 	//-------------------------------------------
