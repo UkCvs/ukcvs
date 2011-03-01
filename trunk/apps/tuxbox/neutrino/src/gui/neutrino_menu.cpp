@@ -137,7 +137,7 @@ void CNeutrinoApp::InitMainMenu(CMenuWidget &mainMenu, CMenuWidget &mainSettings
 	personalize = new CPersonalizeGui;
 	
 	// Main Menu
-	mainMenu.addItem(GenericMenuSeparator);
+	mainMenu.addItem(new CMenuSeparator(CMenuSeparator::LINE | CMenuSeparator::STRING, LOCALE_PERSONALIZE_ACCESS));
 
 	//tv-mode
  	personalize->addItem(mainMenu, LOCALE_MAINMENU_TVMODE, true, NULL, this, "tv", CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED, (g_settings.startmode == STARTMODE_TV || firstchannel.mode != 'r' ), g_settings.personalize_tvmode);

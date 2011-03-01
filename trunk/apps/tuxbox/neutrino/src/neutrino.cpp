@@ -353,8 +353,8 @@ int CNeutrinoApp::loadSetup()
 	}
 
 	//video
-	g_settings.video_Format = configfile.getInt32("video_Format", CControldClient::VIDEOFORMAT_4_3);
-	g_settings.video_backgroundFormat = configfile.getInt32("video_backgroundFormat", CControldClient::VIDEOFORMAT_4_3);
+	g_settings.video_Format = configfile.getInt32("video_Format", CControldClient::VIDEOFORMAT_AUTO);
+	g_settings.video_backgroundFormat = configfile.getInt32("video_backgroundFormat", CControldClient::VIDEOFORMAT_16_9);
 
 	g_settings.video_csync = configfile.getInt32( "video_csync", 0 );
 
@@ -363,10 +363,10 @@ int CNeutrinoApp::loadSetup()
 	g_settings.gtx_alpha2 = configfile.getInt32( "gtx_alpha2", 1);
 
 	// EPG-Config
-	g_settings.epg_cache 		= configfile.getString("epg_cache_time", "14");
-	g_settings.epg_extendedcache	= configfile.getString("epg_extendedcache_time", "6");
+	g_settings.epg_cache 		= configfile.getString("epg_cache_time", "1");
+	g_settings.epg_extendedcache	= configfile.getString("epg_extendedcache_time", "24");
 	g_settings.epg_old_events 	= configfile.getString("epg_old_events", "1");
-	g_settings.epg_max_events 	= configfile.getString("epg_max_events", "6000");
+	g_settings.epg_max_events 	= configfile.getString("epg_max_events", "10000");
 	g_settings.epg_dir 		= configfile.getString("epg_dir", "");
 
 	// NTP-Server for sectionsd
@@ -393,20 +393,20 @@ int CNeutrinoApp::loadSetup()
 	strcpy(g_settings.shutdown_count, configfile.getString("shutdown_count","0").c_str());
 	g_settings.volumebar_disp_pos		= configfile.getInt32("volumebar_disp_pos" , 4 );
 	g_settings.infobar_sat_display		= configfile.getBool("infobar_sat_display"       , true );
-	g_settings.infobar_subchan_disp_pos	= configfile.getInt32("infobar_subchan_disp_pos" , 4 );
+	g_settings.infobar_subchan_disp_pos	= configfile.getInt32("infobar_subchan_disp_pos" , 0 );
 	g_settings.misc_spts			= configfile.getBool("misc_spts"                 , false );
 #ifndef TUXTXT_CFG_STANDALONE
 	g_settings.tuxtxt_cache			= configfile.getBool("tuxtxt_cache"              , false );
 #endif
-	g_settings.virtual_zap_mode		= configfile.getBool("virtual_zap_mode"          , false);
+	g_settings.virtual_zap_mode		= configfile.getBool("virtual_zap_mode"          , true);
 	g_settings.infobar_show			= configfile.getInt32("infobar_show"             , 0);
 	g_settings.show_mute_icon		= configfile.getInt32("show_mute_icon"		,1);
 	g_settings.channellist_epgtext_align_right		= configfile.getBool("channellist_epgtext_align_right"          , false);
-	g_settings.channellist_extended		= configfile.getBool("channellist_extended"          , false);
-	strcpy( g_settings.infobar_channel_logodir, configfile.getString( "infobar_channel_logodir", "/var/share/tuxbox/neutrino/icons/").c_str()); 
+	g_settings.channellist_extended		= configfile.getBool("channellist_extended"          , true);
+	strcpy( g_settings.infobar_channel_logodir, configfile.getString( "infobar_channel_logodir", "/var/etc/icon/").c_str()); 
 	g_settings.infobar_show_channellogo	= configfile.getInt32("infobar_show_channellogo"		,COsdSetup::INFOBAR_NO_LOGO);
 	g_settings.infobar_channellogo_background		= configfile.getInt32("infobar_channellogo_background"		,COsdSetup::INFOBAR_NO_BACKGROUND);
-	g_settings.startmode			= configfile.getInt32("startmode" , STARTMODE_RESTORE );
+	g_settings.startmode			= configfile.getInt32("startmode" , STARTMODE_TV );
 
 	g_settings.radiotext_enable		= configfile.getBool("radiotext_enable"          , false);
 	//audio
@@ -537,16 +537,16 @@ int CNeutrinoApp::loadSetup()
 	g_settings.personalize_shutdown = configfile.getInt32("personalize_shutdown", CPersonalizeGui::PERSONALIZE_MODE_NOTVISIBLE);
 	g_settings.personalize_lcd = configfile.getInt32("personalize_lcd", CPersonalizeGui::PERSONALIZE_MODE_NOTVISIBLE);
 #else
-	g_settings.personalize_scartmode = configfile.getInt32("personalize_scartmode", CPersonalizeGui::PERSONALIZE_MODE_VISIBLE);
+	g_settings.personalize_scartmode = configfile.getInt32("personalize_scartmode", CPersonalizeGui::PERSONALIZE_MODE_NOTVISIBLE);
 #ifdef HAVE_TRIPLEDRAGON
 	// no real shutdown, so let's hide it
 	g_settings.personalize_shutdown = configfile.getInt32("personalize_shutdown", CPersonalizeGui::PERSONALIZE_MODE_NOTVISIBLE);
 #else
 	g_settings.personalize_shutdown = configfile.getInt32("personalize_shutdown", CPersonalizeGui::PERSONALIZE_MODE_VISIBLE);
 #endif
-	g_settings.personalize_lcd = configfile.getInt32("personalize_lcd", CPersonalizeGui::PERSONALIZE_MODE_VISIBLE);
+	g_settings.personalize_lcd = configfile.getInt32("personalize_lcd", CPersonalizeGui::PERSONALIZE_MODE_NOTVISIBLE);
 #endif
-	g_settings.personalize_sleeptimer = configfile.getInt32("personalize_sleeptimer", CPersonalizeGui::PERSONALIZE_MODE_VISIBLE);
+	g_settings.personalize_sleeptimer = configfile.getInt32("personalize_sleeptimer", CPersonalizeGui::PERSONALIZE_MODE_NOTVISIBLE);
 	g_settings.personalize_reboot = configfile.getInt32("personalize_reboot", CPersonalizeGui::PERSONALIZE_MODE_VISIBLE);
 
 	g_settings.personalize_games = configfile.getInt32("personalize_games", CPersonalizeGui::PERSONALIZE_MODE_VISIBLE);
@@ -682,7 +682,7 @@ int CNeutrinoApp::loadSetup()
 	g_settings.key_subchannel_up = (neutrino_msg_t)configfile.getInt32("key_subchannel_up", CRCInput::RC_right);
 	g_settings.key_subchannel_down = (neutrino_msg_t)configfile.getInt32("key_subchannel_down", CRCInput::RC_left);
 	g_settings.key_subchannel_toggle = (neutrino_msg_t)configfile.getInt32("key_subchannel_toggle", CRCInput::RC_0);
-	g_settings.key_zaphistory = (neutrino_msg_t)configfile.getInt32("key_zaphistory", CRCInput::RC_home);
+	g_settings.key_zaphistory = (neutrino_msg_t)configfile.getInt32("key_zaphistory", CRCInput::RC_nokey);
 	g_settings.key_lastchannel = (neutrino_msg_t)configfile.getInt32("key_lastchannel", CRCInput::RC_0);
 
 #ifdef HAVE_DBOX_HARDWARE

@@ -681,7 +681,7 @@ mainmenu.audioplayer Audioplayer
 mainmenu.clearsectionsd Clear EPG Cache
 mainmenu.extrasmenu Extras Menu
 mainmenu.games Games
-mainmenu.head Main Menu
+mainmenu.head UkCvs Menu
 mainmenu.movieplayer Movie Player
 mainmenu.pausesectionsd Read EPG
 mainmenu.pictureviewer Picture viewer
@@ -1074,7 +1074,7 @@ parentallock.never never
 parentallock.onsignal on broadcasted lock
 parentallock.parentallock Youth protection
 parentallock.prompt prompt for PIN
-personalize.access Powered by UKCVS
+personalize.access Powered by UkCvs
 personalize.disabled Disabled
 personalize.enabled Enabled
 personalize.head Personalization
