@@ -179,7 +179,7 @@ void CInfoViewer::showSatfind()
 		lastber = ber;
 
 		CZapitClient::CCurrentServiceInfo si = g_Zapit->getCurrentServiceInfo();
-		sprintf (freq, "%d.%d MHz %c", si.tsfrequency / 1000, si.tsfrequency % 1000, si.polarisation ? 'V' : 'H');
+		sprintf (freq, "%d.%d MHz %c", si.tsfrequency / 1000, si.tsfrequency % 1000, ((si.polarisation > 0) && (si.polarisation < 4)) ? 'V' : 'H');
 
 		frameBuffer->paintBoxRel(ChanInfoX, BoxEndY, BoxEndX-ChanInfoX, 30, COL_INFOBAR_PLUS_0);
 
@@ -340,7 +340,7 @@ void CInfoViewer::showMovieTitle(const int _playstate, const std::string &title,
 					*/
 	playstate = _playstate;
 	const int mode = playmode;
-	InfoHeightY_Info = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->getHeight() + BOTTOM_BAR_FONT_OFFSET;
+	InfoHeightY_Info = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->getHeight() + BOTTOM_BAR_FONT_OFFSET + (g_settings.infobar_sat_display ? 30 : 0);
 	showButtonBar = true;
 	bool fadeIn = (g_info.box_Type != CControld::TUXBOX_MAKER_NOKIA) && // dreambox and eNX only 
 		g_settings.widget_fade && (!is_visible);
@@ -791,7 +791,7 @@ requests to sectionsd.
 				paintTime( show_dot, false );
 				showRecordIcon(show_dot);
 				show_dot = !show_dot;
-				if (show_dot)
+				if (show_dot && !tsmode)
 					showSatfind();
 #ifdef ENABLE_RADIOTEXT
 				if ((g_settings.radiotext_enable) && (CNeutrinoApp::getInstance()->getMode() == NeutrinoMessages::mode_radio))
@@ -1004,7 +1004,7 @@ void CInfoViewer::showButton(const int button, const bool calledFromMPlayer, con
 {
 	const char* txt = NULL;
 	int bx = BoxStartX + (ChanWidth / 3);
-	int by = BoxEndY + (InfoHeightY_Info >> 3) + (g_settings.infobar_sat_display ? 25 : 0);
+	int by = BoxEndY + (InfoHeightY_Info >> 3) + ((g_settings.infobar_sat_display && !calledFromMPlayer) ? 25 : 0);
 	int startX = bx;
 	int xoffset = 0;
 	bool paint = true;
@@ -1800,9 +1800,9 @@ void CInfoViewer::showInfoFile()
 			fclose(ds);
 		else
 		{
-			frameBuffer->paintBoxRel(ChanInfoX+ 170, BoxStartY+ 20, 185, 25, COL_INFOBAR_PLUS_0, RADIUS_LARGE);
+			frameBuffer->paintBoxRel(ChanInfoX+ 170, ChanNameY- 15, 185, 25, COL_INFOBAR_PLUS_0, RADIUS_LARGE);
 			sprintf (infotext, "Powered by UkCvs.org");
-			g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->RenderString(ChanInfoX+ 180, BoxStartY+ 42, BoxEndX, infotext, COL_INFOBAR_PLUS_0, 0, true); // UTF-8
+			g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->RenderString(ChanInfoX+ 180, ChanNameY+ 7, BoxEndX, infotext, COL_INFOBAR_PLUS_0, 0, true); // UTF-8
 		}
 		return;
 	}
