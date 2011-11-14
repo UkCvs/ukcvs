@@ -340,7 +340,7 @@ void CInfoViewer::showMovieTitle(const int _playstate, const std::string &title,
 					*/
 	playstate = _playstate;
 	const int mode = playmode;
-	InfoHeightY_Info = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->getHeight() + BOTTOM_BAR_FONT_OFFSET + (g_settings.infobar_sat_display ? 30 : 0);
+	InfoHeightY_Info = g_Font[SNeutrinoSettings::FONT_TYPE_INFOBAR_SMALL]->getHeight() + BOTTOM_BAR_FONT_OFFSET;
 	showButtonBar = true;
 	bool fadeIn = (g_info.box_Type != CControld::TUXBOX_MAKER_NOKIA) && // dreambox and eNX only 
 		g_settings.widget_fade && (!is_visible);
@@ -550,6 +550,9 @@ void CInfoViewer::showTitle(const int ChanNum, const std::string & Channel, cons
 			frameBuffer->paintBackgroundBox(ChanInfoX, BoxEndY, BoxEndX, BoxEndY+ BOTTOM_BAR_OFFSET);
 
 		frameBuffer->paintBoxRel(ChanInfoX, BoxEndY + BOTTOM_BAR_OFFSET, BoxEndX - ChanInfoX, InfoHeightY_Info - BOTTOM_BAR_OFFSET, COL_INFOBAR_BUTTONS_BACKGROUND, RADIUS_LARGE, CORNER_BOTTOM);
+
+		if (g_settings.infobar_sat_display)
+			frameBuffer->paintBoxRel(ChanInfoX, BoxEndY, BoxEndX - ChanInfoX, 30, COL_INFOBAR_PLUS_0); // background for satfind
 
 		showButton(SNeutrinoSettings::BUTTON_BLUE); // button blue // USERMENU
 		showInfoIcons();
@@ -1139,12 +1142,15 @@ void CInfoViewer::showIcon_RadioText(bool rt_available) const
 
 void CInfoViewer::showIcon_16_9() const
 {
+	int mode = CNeutrinoApp::getInstance()->getMode();
+	bool tsmode = (mode == NeutrinoMessages::mode_ts);
+
 #ifdef ENABLE_RADIOTEXT
-	if (CNeutrinoApp::getInstance()->getMode() != NeutrinoMessages::mode_radio)
+	if (mode != NeutrinoMessages::mode_radio)
 #endif
 	frameBuffer->paintIcon((aspectRatio != 0) ? NEUTRINO_ICON_16_9 : NEUTRINO_ICON_16_9_GREY,
-				BoxEndX - (ICON_LARGE_WIDTH + 2 + ICON_LARGE_WIDTH + 2 + ICON_SMALL_WIDTH + 2 + ICON_SMALL_WIDTH + 6),
-				BoxEndY + (g_settings.infobar_sat_display ? 15 : 0) + (InfoHeightY_Info - ICON_HEIGHT) / 2);
+				BoxEndX - (ICON_LARGE_WIDTH + 2 + ICON_LARGE_WIDTH + (tsmode ? 0 : 2 + ICON_SMALL_WIDTH + 2 + ICON_SMALL_WIDTH) + 6),
+				BoxEndY + (g_settings.infobar_sat_display && !tsmode ? 15 : 0) + (InfoHeightY_Info - ICON_HEIGHT) / 2);
 }
 
 void CInfoViewer::showIcon_VTXT() const
@@ -1202,9 +1208,12 @@ void CInfoViewer::showIcon_Audio(const int ac3state) const
 			break;
 	}
 
+	bool tsmode = (CNeutrinoApp::getInstance()->getMode() == NeutrinoMessages::mode_ts);
+
 	frameBuffer->paintIcon(dd_icon,
-			       BoxEndX - (ICON_LARGE_WIDTH + 2 + ICON_SMALL_WIDTH + 2 + ICON_SMALL_WIDTH + 6),
-			       BoxEndY + (g_settings.infobar_sat_display ? 15 : 0) + (InfoHeightY_Info - ICON_HEIGHT) / 2);
+				BoxEndX - (ICON_LARGE_WIDTH + (tsmode ? 0 : 2 + ICON_SMALL_WIDTH + 2 + ICON_SMALL_WIDTH) + 6),
+				BoxEndY + (g_settings.infobar_sat_display && !tsmode ? 15 : 0) + (InfoHeightY_Info - ICON_HEIGHT) / 2);
+
 }
 
 void CInfoViewer::showInfoIcons()
@@ -1691,12 +1700,12 @@ void CInfoViewer::show_Data(bool calledFromEvent)
 	time_t jetzt=time(NULL);
 	if (info_CurrentNext.flags & CSectionsdClient::epgflags::has_current)
 	{
-		int seit = (jetzt - info_CurrentNext.current_zeit.startzeit + 30) / 60;
-		int rest = (info_CurrentNext.current_zeit.dauer / 60) - seit ;
-		if (seit< 0)
+		int seit = (abs(jetzt - info_CurrentNext.current_zeit.startzeit) + 30) / 60;
+		int rest = (info_CurrentNext.current_zeit.dauer / 60) - seit;
+		if (jetzt < info_CurrentNext.current_zeit.startzeit)
 		{
 			progressbarPos = 0;
-			sprintf((char*)&runningRest, "in %d min", -seit);
+			sprintf((char*)&runningRest, "in %d min", seit);
 		}
 		else
 		{
