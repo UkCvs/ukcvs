@@ -83,13 +83,18 @@
 #include "SIsections.hpp"
 #include "SIlanguage.hpp"
 
+#define KB(x) ((x) / 1024)
+#include <iostream>
+#include <fstream>
+#include <curl/curl.h>
+
 //#include "timerdclient.h"
 //#include "../timermanager.h"
 
 // 60 Minuten Zyklus...
-#define TIME_EIT_SCHEDULED_PAUSE 60 * 60
+//#define TIME_EIT_SCHEDULED_PAUSE 60 * 60
 // -- 5 Minutes max. pause should improve behavior  (rasc, 2005-05-02)
-// #define TIME_EIT_SCHEDULED_PAUSE 5* 60
+#define TIME_EIT_SCHEDULED_PAUSE 5* 60
 // Zeit die fuer die gewartet wird, bevor der Filter weitergeschaltet wird, falls es automatisch nicht klappt
 #define TIME_EIT_SKIPPING 90
 
@@ -174,6 +179,7 @@ static int scanning = 1;
 std::string epg_filter_dir = "/var/tuxbox/config/zapit/epgfilter.xml";
 static bool epg_filter_is_whitelist = false;
 static bool epg_filter_except_current_next = false;
+static bool disableXtendedDesc = false;
 static bool bouquet_filter_is_whitelist = false;
 static bool messaging_zap_detected = false;
 
@@ -717,12 +723,21 @@ static void addEvent(const SIevent &evt, const unsigned table_id, const time_t z
 
 			SIeventPtr e(eptr);
 
+			if (disableXtendedDesc && (table_id != 0)) {
+				e->setText("OFF","");
+				e->setExtendedText("OFF","");
+			}
+
 			writeLockEvents();
 			if (e->runningStatus() > 2) { // paused or currently running
 				if (!myCurrentEvent || (myCurrentEvent && (*myCurrentEvent).uniqueKey() != e->uniqueKey())) {
 					if (myCurrentEvent)
 						delete myCurrentEvent;
 					myCurrentEvent = new SIevent(evt);
+					if (disableXtendedDesc && (table_id != 0)) {
+						myCurrentEvent->setText("OFF","");
+						myCurrentEvent->setExtendedText("OFF","");
+					}
 					writeLockMessaging();
 					messaging_got_CN |= 0x01;
 					if (myNextEvent && (*myNextEvent).uniqueKey() == e->uniqueKey()) {
@@ -745,6 +760,10 @@ static void addEvent(const SIevent &evt, const unsigned table_id, const time_t z
 					if (myNextEvent)
 						delete myNextEvent;
 					myNextEvent = new SIevent(evt);
+					if (disableXtendedDesc && (table_id != 0)) {
+						myNextEvent->setText("OFF","");
+						myNextEvent->setExtendedText("OFF","");
+					}
 					writeLockMessaging();
 					messaging_got_CN |= 0x02;
 					unlockMessaging();
@@ -849,11 +868,17 @@ static void addEvent(const SIevent &evt, const unsigned table_id, const time_t z
 		si->second->setName("OFF",evt.getName().c_str());
 		si->second->contentClassification = evt.contentClassification;
 		si->second->userClassification = evt.userClassification;
-		if ((evt.getExtendedText().length() > 0) &&
-				(evt.times.begin()->startzeit < zeit + secondsExtendedTextCache))
-			si->second->setExtendedText("OFF",evt.getExtendedText().c_str());
-		if (evt.getText().length() > 0)
-			si->second->setText("OFF",evt.getText().c_str());
+		if (disableXtendedDesc && (table_id != 0)) {
+			si->second->setText("OFF","");
+			si->second->setExtendedText("OFF","");
+		}
+		else {
+			if ((evt.getExtendedText().length() > 0) &&
+					(evt.times.begin()->startzeit < zeit + secondsExtendedTextCache))
+				si->second->setExtendedText("OFF",evt.getExtendedText().c_str());
+			if (evt.getText().length() > 0)
+				si->second->setText("OFF",evt.getText().c_str());
+		}
 		if (evt.getName().length() > 0)
 			si->second->setName("OFF",evt.getName().c_str());
 	}
@@ -869,12 +894,19 @@ static void addEvent(const SIevent &evt, const unsigned table_id, const time_t z
 		}
 
 		SIeventPtr e(eptr);
-	
+
+		if (disableXtendedDesc && (table_id != 0)) {
+			e->setText("OFF","");
+			e->setExtendedText("OFF","");
+		}
+
 		//Strip ExtendedDescription if too far in the future
 		if ((e->times.begin()->startzeit > zeit + secondsExtendedTextCache) &&
-		   (SIlanguage::getMode() == CSectionsdClient::LANGUAGE_MODE_OFF) && (zeit != 0))
+		   (SIlanguage::getMode() == CSectionsdClient::LANGUAGE_MODE_OFF) && (zeit != 0)) {
+			e->setText("OFF","");
 			e->setExtendedText("OFF","");
-	
+		}
+
 		// Damit in den nicht nach Event-ID sortierten Mengen
 		// Mehrere Events mit gleicher ID sind, diese vorher loeschen
 		unlockEvents();
@@ -2572,6 +2604,7 @@ static void commandDumpStatusInformation(int connfd, char* /*data*/, const unsig
 
 	snprintf(stati, MAX_SIZE_STATI,
 		"$Id: sectionsd.cpp,v 1.319 2010/02/21 10:14:15 rhabarber1848 Exp $\n"
+		"Modded for RT-UK EPG - LraiZer - www.UkCvs.org\n"
 		"%sCurrent time: %s"
 		"Hours to cache: %ld\n"
 		"Hours to cache extended text: %ld\n"
@@ -4522,6 +4555,325 @@ static void *insertEventsfromFile(void *)
 	pthread_exit(NULL);
 }
 
+static void rt_infobar(const char *rtinfo)
+{
+	FILE *f = fopen("/tmp/infobar.txt","w");
+	if (f != NULL)
+	{
+		fputs(rtinfo,f);
+		putc('\n',f);
+		fclose(f);
+	}
+}
+
+static void *insertEventsfromRemoteFile(void *)
+{
+	std::string mapfile = "/var/tuxbox/config/rtmap.xml";
+	xmlNodePtr rtmap = NULL;
+	xmlNodePtr map = NULL;
+	xmlNodePtr service = NULL;
+
+	t_original_network_id onid = 0;
+	t_transport_stream_id tsid = 0;
+	t_service_id sid = 0;
+
+	epg_filter_is_whitelist = false;
+	epg_filter_except_current_next = false;
+
+	FILE *logfile = NULL;
+	bool rt_logging = false;
+	char msg[256];
+
+	unsigned short service_total = 0;
+	unsigned short service_current = 0;
+	unsigned short eventid = 0;
+	unsigned int event_memory_overload = 0;
+	int offset_hours,epg_days,desc_hours = 0;
+
+	double total_time = 0.0;
+	double download_size = 0.0;
+	double download_speed = 0.0;
+
+	std::string URL;
+	std::string map_archive;
+	std::string map_dat;
+	std::string map_name;
+	std::string datfile;
+	std::string indexfile;
+	std::string spc = "\n    \t";
+	std::vector<std::string> dat_item;
+
+	CURL *curl;
+	CURLcode res;
+	res = (CURLcode) 1;
+	curl = curl_easy_init();
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "neutrino/RT-loader 1.0");
+	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, (long)1);
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+
+	rt_infobar("RT-EPG Process - Starting");
+	std::cout<<"[RT-sectionsd] rt epg loading..."<<std::endl;
+	system("wget http://localhost/control/message?popup="
+		"RT-EPG%20PROCESS%20STARTING... >/dev/null 2>&1");
+
+	system("sectionsdcontrol --pause");
+	system("sectionsdcontrol --freemem");
+	if (epg_dir == "cache") epg_dir = "/tmp/";
+
+	time_t now;
+	now = time(NULL);
+	struct mallinfo meminfo = mallinfo();
+
+	xmlDocPtr rtmap_parser = parseXmlFile(mapfile.c_str());
+	if (rtmap_parser != NULL)
+	{
+		map = xmlDocGetRootElement(rtmap_parser)->xmlChildrenNode;
+		while (map)
+		{
+			service = map->xmlChildrenNode;
+			while (service)
+			{
+				service_total++;
+				service = service->xmlNextNode;
+			}
+			map = map->xmlNextNode;
+		}
+
+		rtmap = xmlDocGetRootElement(rtmap_parser);
+		map_archive = xmlGetAttribute(rtmap, "archive");
+
+		if (xmlGetNumericAttribute(rtmap, "settings", 10) == 1)
+		{
+			secondsToCache = 3600;
+			oldEventsAre = 0;
+			secondsExtendedTextCache = 0;
+			max_events = 18000;
+			disableXtendedDesc = true;
+		}
+
+		if (xmlGetNumericAttribute(rtmap, "logging", 10) == 1)
+		{
+			logfile = fopen("/tmp/rtepg.log","w");
+			if (logfile != NULL)
+			{
+				fclose(logfile);
+				logfile = fopen("/tmp/rtepg.log","a");
+				if (logfile != NULL) rt_logging = true;
+			}
+		}
+
+		if (rt_logging)
+		{
+			fprintf(logfile,"[RT-sectionsd] %s\nRTMAP services=%ld\nEpg Cache Directory=%s\n", ctime(&now), service_total, epg_dir.c_str());
+			fprintf(logfile,"secondsToCache=%ld oldEventsAre=%ld secondsExtendedTextCache=%ld max_events=%ld\n",
+				secondsToCache, oldEventsAre, secondsExtendedTextCache, max_events);
+		}
+
+		map = rtmap->xmlChildrenNode;
+		while (map)
+		{
+			map_dat = xmlGetAttribute(map, "dat");
+			map_name = xmlGetAttribute(map, "name");
+
+			datfile = epg_dir + map_dat + ".dat";
+			std::ifstream dat_file(datfile.c_str());
+
+			if (dat_file.is_open())
+			{
+				if (rt_logging)
+					fprintf(logfile,"\n\nFILE\t%s exists, lets try processing it\n", datfile.c_str());
+			}
+			else
+			{
+				if (rt_logging)
+					fprintf(logfile,"\n\nFILE\t%s does not exist, lets download it", datfile.c_str());
+
+				URL=map_archive + map_dat + ".dat";
+				FILE *headerfile;
+				headerfile = fopen(datfile.c_str(), "w");
+
+				if (curl && headerfile)
+				{
+					curl_easy_setopt(curl, CURLOPT_URL, URL.c_str() );
+					curl_easy_setopt(curl, CURLOPT_FILE, headerfile);
+
+					res = curl_easy_perform(curl);
+					curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total_time);
+					curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD, &download_size);
+					curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD, &download_speed);
+
+					if (rt_logging)
+					{
+						fprintf(logfile,"%s%s", spc.c_str(), URL.c_str());
+						fprintf(logfile,"%ssize: %.0f KB, time: %.2f sec, speed: %.2f KB/sec",
+							spc.c_str(), KB(download_size), total_time, KB(download_speed));
+					}
+				}
+
+				if (headerfile)
+				{
+					fflush(headerfile);
+					fclose(headerfile);
+				}
+
+				dat_file.open(datfile.c_str());
+				dat_file.clear();
+				dat_file.seekg(0);
+			}
+
+			if (rt_logging)
+				fprintf(logfile,"%smap dat=%s name=%s", spc.c_str(), map_dat.c_str(), map_name.c_str());
+
+			service = map->xmlChildrenNode;
+			while (service)
+			{
+				service_current++;
+
+				epg_days = xmlGetNumericAttribute(service, "epg_days", 10);
+				desc_hours = xmlGetNumericAttribute(service, "desc_hours", 10);
+				offset_hours = xmlGetNumericAttribute(service, "offset_hours", 10);
+				onid = xmlGetNumericAttribute(service, "onid", 16);
+				tsid = xmlGetNumericAttribute(service, "tsid", 16);
+				sid = xmlGetNumericAttribute(service, "sid", 16);
+
+				sprintf(msg,"RT-EPG Loading %d of %d",service_current,service_total);
+				rt_infobar(msg);
+
+				if (dat_file.is_open())
+				{
+					std::string dat_line;
+
+					while (!dat_file.eof() && getline(dat_file, dat_line))
+					{
+						if (dat_line.length() > 0 && dat_line[0] != '#')
+						{
+							int pre = 0;
+							std::string::size_type index = dat_line.find('~');
+
+							while (index != std::string::npos)
+							{
+								dat_item.push_back(dat_line.substr(pre, index-pre));
+								pre = index + 1;
+								index = dat_line.find('~', pre);
+							}
+							dat_item.push_back(dat_line.substr(pre));
+
+							if (dat_item.size() == 23)
+							{
+								struct tm t;
+								t.tm_year = atoi(dat_item[19].substr(6, 4).c_str()) - 1900;
+								t.tm_mon = atoi(dat_item[19].substr(3, 2).c_str()) - 1;		//	Month, 0 - jan
+								t.tm_mday = atoi(dat_item[19].substr(0, 2).c_str());		//	Day of the month
+								t.tm_hour = atoi(dat_item[20].substr(0, 2).c_str());
+								t.tm_min = atoi(dat_item[20].substr(3, 2).c_str());
+								t.tm_sec = 0;
+								t.tm_isdst = -1;	// Is DST on? 1 = yes, 0 = no, -1 = unknown
+								int local = mktime(&t);
+								int localOffset = timezone;
+
+								if (local > -1) local -= localOffset; // convert to real GMT?
+
+								int duration = atoi(dat_item[22].c_str())*60;
+								int stop = now+(epg_days*86400);
+								local += offset_hours*3600;
+
+								if (((local + duration) > now) && (local < stop))
+								{
+									eventid++;
+
+									std::string sp1,sp1a,sp1b,sp2,sp3a,sp3b,sp17 = "";
+									if (dat_item[3].length()>0) {sp3a="Film(";sp3b=") ";}
+									if (dat_item[1].length()>0) {sp1a="(";sp1b=") ";}
+									if (dat_item[2].length()>0) sp2=": ";
+									if (dat_item[8] == "true") sp17=" (R)";
+									if (dat_item[11] == "true") sp1="New Series: ";
+
+									if (local > (now+(desc_hours*3600))) dat_item[17] = "";
+									std::string description=sp3a+dat_item[3]+sp3b+sp1+sp1a+dat_item[1]+sp1b+dat_item[2]+sp2+dat_item[17]+sp17;
+
+									std::string desc_append="";
+									desc_append=desc_append+"\212"+"Genre: "+dat_item[16];
+									if (dat_item[7] == "true") desc_append=desc_append+"\212"+"Certificate "+dat_item[15]+"\212"+"Star Rating "+dat_item[14];
+
+									SIevent e(onid,tsid,sid,eventid);
+									e.setName(std::string(UTF8_to_Latin1("OFF")),std::string(UTF8_to_Latin1(dat_item[0].c_str())));
+									e.setText(std::string(UTF8_to_Latin1("OFF")),std::string(UTF8_to_Latin1(description.c_str())));
+									e.appendExtendedText(std::string(UTF8_to_Latin1("OFF")),std::string(UTF8_to_Latin1(desc_append.c_str())));
+									e.times.insert(SItime(local,duration));
+
+									if ((eventid < 18000) && (meminfo.arena < 10485760)) 
+									{
+										addEvent(e, 0, 0);
+										addEPGFilter(onid, tsid, sid);
+									}
+									else
+										event_memory_overload++;
+								}
+							}
+							dat_item.clear();
+						}
+					}
+				}
+
+				meminfo = mallinfo();
+
+				if (rt_logging)
+				{
+					fprintf(logfile, "\n[%d]%sservice epg_days=%d desc_hours=%d offset_hours=%d onid=%x tsid=%x sid=%x",
+						service_current, spc.c_str(), epg_days, desc_hours, offset_hours, onid, tsid, sid);
+					fprintf(logfile, "%seventID %d, mem in use by epg: %dkB, mem used for epg %dkB",
+						spc.c_str(), eventid, KB(meminfo.uordblks), KB(meminfo.arena));
+				}
+
+				dat_file.clear();
+				dat_file.seekg(0);
+				service = service->xmlNextNode;
+			}
+
+			dat_file.close();
+			if (epg_dir == "/tmp/")
+				remove(datfile.c_str());
+
+			map = map->xmlNextNode;
+		}
+	}
+
+	xmlFreeDoc(rtmap_parser);
+	curl_easy_cleanup(curl);
+
+	time_t tm;
+	tm = time(NULL);
+	meminfo = mallinfo();
+
+	if (rt_logging)
+	{
+		fprintf(logfile, "\n\nadded %d services using %dkB of memory for epg cache\n",
+			service_current, KB(meminfo.uordblks));
+		fprintf(logfile, "Processing finished in %ld seconds, %d events added, %d events ignored >10MB\n"
+			"\nFinished %s", tm-now, eventid, event_memory_overload, ctime(&tm));
+	}
+
+	if (logfile) fclose(logfile);
+
+	sprintf(msg,"wget http://localhost/control/message?popup="
+		"RT-EPG%%20LOADING%%20COMPLETE%%0A%%20%%0A"
+		"ADDING%%20%d%%20events%%20to%%20epg%%20cache%%0A"
+		"IGNORE%%20%d%%20events%%20over%%2010MB%%20MaxCache%%0A"
+		"MEMORY%%20used%%20for%%20epg%%20cache,%%20%dkB%%0A%%20%%0A"
+		"Processing%%20finished%%20in%%20%ld%%20mins%%20%ld%%20secs >/dev/null 2>&1",
+		eventid,event_memory_overload,KB(meminfo.uordblks),(tm-now)/60,(tm-now)%60);
+
+	system(msg);
+	system("sectionsdcontrol --nopause");
+	std::cout<<"[RT-sectionsd] rt epg loading Finished"<<std::endl;
+	sprintf(msg,"RT-EPG Finished %d of %d",service_current,service_total);
+	rt_infobar(msg);
+	usleep(60000000);
+	remove("/tmp/infobar.txt");
+
+	pthread_exit(NULL);
+}
+
 static void commandReadSIfromXML(int connfd, char *data, const unsigned dataLength)
 {
 	pthread_t thrInsert;
@@ -4542,6 +4894,35 @@ static void commandReadSIfromXML(int connfd, char *data, const unsigned dataLeng
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
 	if (pthread_create (&thrInsert, &attr, insertEventsfromFile, 0 ))
+	{
+		perror("sectionsd: pthread_create()");
+	}
+
+	pthread_attr_destroy(&attr);
+
+	return ;
+}
+
+static void commandReadSIfromRT(int connfd, char *data, const unsigned dataLength)
+{
+	pthread_t thrInsert;
+
+	if (dataLength > 100)
+		return ;
+
+	writeLockMessaging();
+	epg_dir = (std::string)data;
+	unlockMessaging();
+
+	struct sectionsd::msgResponseHeader responseHeader;
+	responseHeader.dataLength = 0;
+	writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), WRITE_TIMEOUT_IN_SECONDS);
+
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+	if (pthread_create (&thrInsert, &attr, insertEventsfromRemoteFile, 0 ))
 	{
 		perror("sectionsd: pthread_create()");
 	}
@@ -4986,6 +5367,7 @@ static s_cmd_table connectionCommands[sectionsd::numberOfCommands] = {
 #endif
 {	commandSetSectionsdScanMode,            "commandSetSectionsdScanMode"		},
 {	commandFreeMemory,			"commandFreeMemory"			},
+{	commandReadSIfromRT,			"commandReadSIfromRT"			},
 {	commandReadSIfromXML,			"commandReadSIfromXML"			},
 {	commandWriteSI2XML,			"commandWriteSI2XML"			},
 {	commandLoadLanguages,                   "commandLoadLanguages"			},
@@ -8494,6 +8876,7 @@ int main(int argc, char **argv)
 	struct sched_param parm;
 
 	printf("$Id: sectionsd.cpp,v 1.319 2010/02/21 10:14:15 rhabarber1848 Exp $\n");
+	printf("Modded for RT-UK EPG - LraiZer - www.UkCvs.org\n");
 #ifdef ENABLE_FREESATEPG
 	printf("[sectionsd] FreeSat enabled\n");
 #endif

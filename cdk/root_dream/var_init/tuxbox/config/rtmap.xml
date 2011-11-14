@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rtmap settings="1" logging="0" archive="http://xmltv.radiotimes.com/xmltv/">
+
+<!-- EXAMPLE Entertainment -->
+
+ <map dat="98" name="BBC 1 N West">
+  <channel epg_days="8" desc_hours="18" offset_hours="0" serviceID="1929" name="BBC 1 N West" tsid="07ff" onid="0002" sat="282"/>
+ </map>
+ <map dat="109" name="BBC 2 England">
+  <channel epg_days="8" desc_hours="18" offset_hours="0" serviceID="189e" name="BBC 2 England" tsid="07fd" onid="0002" sat="282"/>
+ </map>
+ <map dat="29" name="ITV1 Granada">
+  <channel epg_days="8" desc_hours="18" offset_hours="0" serviceID="2760" name="ITV1 Granada" tsid="07fc" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="280f" name="ITV1+1" tsid="0806" onid="0002" sat="282"/>
+ </map>
+ <map dat="132" name="Channel 4">
+  <channel epg_days="8" desc_hours="18" offset_hours="0" serviceID="23fb" name="Channel 4" tsid="07f9" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="2078" name="Channel 4 +1" tsid="07fa" onid="0002" sat="282"/>
+ </map>
+ <map dat="134" name="Channel 5">
+  <channel epg_days="8" desc_hours="18" offset_hours="0" serviceID="18bf" name="Channel 5" tsid="07fd" onid="0002" sat="282"/>
+ </map>
+ <map dat="45" name="BBC THREE">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="18af" name="BBC THREE" tsid="07fd" onid="0002" sat="282"/>
+ </map>
+ <map dat="47" name="BBC FOUR">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="1910" name="BBC FOUR" tsid="07ff" onid="0002" sat="282"/>
+ </map>
+ <map dat="185" name="ITV2">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="2756" name="ITV2" tsid="07fc" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="27b5" name="ITV2+1" tsid="0805" onid="0002" sat="282"/>
+ </map>
+ <map dat="1859" name="ITV3">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="2814" name="ITV3" tsid="0806" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="2815" name="ITV3+1" tsid="0806" onid="0002" sat="282"/>
+ </map>
+ <map dat="1961" name="ITV4">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="2758" name="ITV4" tsid="07fc" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="271f" name="ITV4+1" tsid="0801" onid="0002" sat="282"/>
+ </map>
+ <map dat="158" name="E4">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="2071" name="E4" tsid="07fa" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="206c" name="E4+1" tsid="07fa" onid="0002" sat="282"/>
+ </map>
+ <map dat="1959" name="More4">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="2094" name="More4" tsid="07fa" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="240e" name="More4 +1" tsid="07f9" onid="0002" sat="282"/>
+ </map>
+
+<!-- EXAMPLE Lifestyle &amp; Culture -->
+
+ <map dat="2549" name="Horse &amp; Country">
+  <channel epg_days="1" desc_hours="18" offset_hours="0" serviceID="d37c" name="Horse &amp; Country" tsid="0a2a" onid="0002" sat="282"/>
+ </map>
+ <map dat="2185" name="Food Network">
+  <channel epg_days="1" desc_hours="18" offset_hours="0" serviceID="d00c" name="Food Network" tsid="0909" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="d016" name="Food Netwrk+1" tsid="0909" onid="0002" sat="282"/>
+ </map>
+
+<!-- EXAMPLE Movies -->
+
+ <map dat="160" name="Film4">
+  <channel epg_days="14" desc_hours="18" offset_hours="0" serviceID="2404" name="Film4" tsid="07f9" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="2409" name="Film4 +1" tsid="07f9" onid="0002" sat="282"/>
+ </map>
+ <map dat="2476" name="horror channel">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="cb89" name="horror channel" tsid="08fd" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="cb22" name="horror ch+1" tsid="0907" onid="0002" sat="282"/>
+ </map>
+ <map dat="2059" name="True Movies 1">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="d048" name="True Movies 1" tsid="090a" onid="0002" sat="282"/>
+ </map>
+ <map dat="2192" name="True Movies 2">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="d04d" name="True Movies 2" tsid="090a" onid="0002" sat="282"/>
+ </map>
+ <map dat="2058" name="movies4men">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="cf75" name="movies4men" tsid="0908" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="d6e5" name="mov4men+1" tsid="0a33" onid="0002" sat="282"/>
+ </map>
+ <map dat="2558" name="movies4men 2">
+  <channel epg_days="3" desc_hours="18" offset_hours="0" serviceID="cf76" name="movies4men 2" tsid="0908" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="cb99" name="mov4men2 +1" tsid="08fe" onid="0002" sat="282"/>
+ </map>
+
+<!-- EXAMPLE Kids -->
+
+ <map dat="2544" name="POP">
+  <channel epg_days="1" desc_hours="18" offset_hours="0" serviceID="d05c" name="POP" tsid="090a" onid="0002" sat="282"/>
+ </map>
+ <map dat="2543" name="Tiny Pop">
+  <channel epg_days="1" desc_hours="18" offset_hours="0" serviceID="d052" name="Tiny Pop" tsid="090a" onid="0002" sat="282"/>
+  <channel epg_days="1" desc_hours="0"  offset_hours="1" serviceID="d061" name="Tiny Pop +1" tsid="090a" onid="0002" sat="282"/>
+ </map>
+
+<!-- EXAMPLE Music -->
+
+ <map dat="2439" name="Chart Show TV">
+  <channel epg_days="1" desc_hours="0" offset_hours="0" serviceID="d075" name="Chart Show TV" tsid="090a" onid="0002" sat="282"/>
+ </map>
+ <map dat="1144" name="Bliss">
+  <channel epg_days="1" desc_hours="0" offset_hours="0" serviceID="d039" name="Bliss" tsid="090a" onid="0002" sat="282"/>
+ </map>
+ <map dat="2551" name="Flava">
+  <channel epg_days="1" desc_hours="0" offset_hours="0" serviceID="d034" name="Flava" tsid="090a" onid="0002" sat="282"/>
+ </map>
+</rtmap>
