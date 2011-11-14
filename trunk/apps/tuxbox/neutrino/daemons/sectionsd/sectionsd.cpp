@@ -4734,7 +4734,7 @@ static void *insertEventsfromRemoteFile(void *)
 				offset_hours = xmlGetNumericAttribute(service, "offset_hours", 10);
 				onid = xmlGetNumericAttribute(service, "onid", 16);
 				tsid = xmlGetNumericAttribute(service, "tsid", 16);
-				sid = xmlGetNumericAttribute(service, "sid", 16);
+				sid = xmlGetNumericAttribute(service, "serviceID", 16);
 
 				sprintf(msg,"RT-EPG Loading %d of %d",service_current,service_total);
 				rt_infobar(msg);
