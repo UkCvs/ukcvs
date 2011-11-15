@@ -249,6 +249,10 @@ void CScanSetup::showScanService()
 	scansetup->addItem(new CMenuForwarder(LOCALE_MAINSETTINGS_SAVESETTINGSNOW, true, NULL, this, "save_action", CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED));
 	scansetup->addItem(GenericMenuSeparatorLine);
 
+	//prepare sat-lnb-settings
+	CStringInput* toff_lat = NULL;
+	CStringInput* toff_long = NULL;
+
 	//sat-lnb-settings
 	if(g_info.delivery_system == DVB_S)
 	{
@@ -298,23 +302,22 @@ void CScanSetup::showScanService()
 		extMotorSettings->addItem(GenericMenuSeparatorLine);
 
 		//motorspeed (how long to set wait timer for dish to travel to correct position) 
-		extMotorSettings->addItem(new CMenuOptionNumberChooser(LOCALE_SATSETUP_MOTORSPEED, (int *)&scanSettings.motorRotationSpeed, true, 0, 64, NULL));
+		extMotorSettings->addItem(new CMenuOptionNumberChooser(LOCALE_SATSETUP_MOTORSPEED, (int *)&scanSettings.motorRotationSpeed, true, 0, 64));
 		extMotorSettings->addItem(GenericMenuSeparatorLine);
 
 		//gotoxx settings
 		extMotorSettings->addItem(new CMenuOptionChooser(LOCALE_SATSETUP_USEGOTOXX,  (int *)&scanSettings.useGotoXX, OPTIONS_OFF0_ON1_OPTIONS, OPTIONS_OFF0_ON1_OPTION_COUNT, true));
 
-		CStringInput * toff;
 		sprintf(zapit_lat, "%02.6f", scanSettings.gotoXXLatitude);
 		sprintf(zapit_long, "%02.6f", scanSettings.gotoXXLongitude);
 
 		extMotorSettings->addItem(new CMenuOptionChooser(LOCALE_SATSETUP_LADIR,  (int *)&scanSettings.gotoXXLaDirection, OPTIONS_SOUTH0_NORTH1_OPTIONS, OPTIONS_SOUTH0_NORTH1_OPTION_COUNT, true));
-		toff = new CStringInput(LOCALE_SATSETUP_LAT, (char *) zapit_lat, 10, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789.");
-		extMotorSettings->addItem(new CMenuForwarder(LOCALE_SATSETUP_LAT, true, zapit_lat, toff));
+		toff_lat = new CStringInput(LOCALE_SATSETUP_LAT, (char *) zapit_lat, 10, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789.");
+		extMotorSettings->addItem(new CMenuForwarder(LOCALE_SATSETUP_LAT, true, zapit_lat, toff_lat));
 
 		extMotorSettings->addItem(new CMenuOptionChooser(LOCALE_SATSETUP_LODIR,  (int *)&scanSettings.gotoXXLoDirection, OPTIONS_EAST0_WEST1_OPTIONS, OPTIONS_EAST0_WEST1_OPTION_COUNT, true));
-		toff = new CStringInput(LOCALE_SATSETUP_LONG, (char *) zapit_long, 10, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789.");
-		extMotorSettings->addItem(new CMenuForwarder(LOCALE_SATSETUP_LONG, true, zapit_long, toff));
+		toff_long = new CStringInput(LOCALE_SATSETUP_LONG, (char *) zapit_long, 10, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789.");
+		extMotorSettings->addItem(new CMenuForwarder(LOCALE_SATSETUP_LONG, true, zapit_long, toff_long));
 
 		extMotorSettings->addItem(GenericMenuSeparatorLine);
 		
@@ -429,6 +432,9 @@ void CScanSetup::showScanService()
 	scansetup->exec(NULL, "");
 	scansetup->hide();
 	delete scansetup;
+
+	delete toff_lat;
+	delete toff_long;
 }
 
 //sub menue scanmode
