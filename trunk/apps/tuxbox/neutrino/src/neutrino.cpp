@@ -83,6 +83,7 @@
 #endif
 
 #include "gui/widget/dirchooser.h"
+#include "gui/filebrowser.h"
 #include "gui/widget/hintbox.h"
 #include "gui/widget/icons.h"
 #include "gui/widget/messagebox.h"
@@ -4008,24 +4009,6 @@ int CNeutrinoApp::exec(CMenuTarget* parent, const std::string & actionKey)
 			hintBox->hide();
 			delete hintBox;
 		}
-	}
-	else if(actionKey == "epgdir")
-	{
-		parent->hide();
-		CFileBrowser b;
-		b.Dir_Mode=true;
-		if (b.exec(g_settings.epg_dir.c_str()))
-		{
-			if((b.getSelectedFile()->Name) == "/")
-			{
-				// if selected dir is root -> clear epg_dir
-				g_settings.epg_dir = "";
-			} else {
-				g_settings.epg_dir = b.getSelectedFile()->Name + "/";
-			}
-			SendSectionsdConfig(); // update notifier
-		}
-		return menu_return::RETURN_REPAINT;
 	}
 	else if(actionKey == "clearSectionsd")
 	{
