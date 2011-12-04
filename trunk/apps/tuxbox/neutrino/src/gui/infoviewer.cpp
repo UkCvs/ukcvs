@@ -161,15 +161,10 @@ void CInfoViewer::showSatfind()
 
 	sig = signal.sig * 100 / 65535;
 	snr = signal.snr * 100 / 65535;
+	ber = signal.ber / 2621; // max 262144 decimal round down <100% (hex 0x40000)
 
-	if ((signal.ber > 0) && (signal.ber < 400))
+	if ((signal.ber > 0) && (signal.ber < 2621))
 		ber = 1;
-	else
-		ber = signal.ber * 100 / 40000;
-
-	// Sometimes the Ber is larger than the Max Ber so therefore needs to be stopped here if (bar > max ber)
-	if (ber > 99)
-		ber = 100;
 
 	// only update if required
 	if ((lastsig != sig) || (lastsnr != snr) || (lastber != ber))
