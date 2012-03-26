@@ -92,9 +92,9 @@
 //#include "../timermanager.h"
 
 // 60 Minuten Zyklus...
-//#define TIME_EIT_SCHEDULED_PAUSE 60 * 60
+#define TIME_EIT_SCHEDULED_PAUSE 60 * 60
 // -- 5 Minutes max. pause should improve behavior  (rasc, 2005-05-02)
-#define TIME_EIT_SCHEDULED_PAUSE 5* 60
+//#define TIME_EIT_SCHEDULED_PAUSE 5* 60
 // Zeit die fuer die gewartet wird, bevor der Filter weitergeschaltet wird, falls es automatisch nicht klappt
 #define TIME_EIT_SKIPPING 90
 
@@ -175,6 +175,7 @@ static long secondsExtendedTextCache;
 //static long oldEventsAre = 60*60L; // 2h  (sometimes want to know something about current/last movie)
 static long oldEventsAre;
 static int scanning = 1;
+static unsigned short eventid_loaded;
 
 std::string epg_filter_dir = "/var/tuxbox/config/zapit/epgfilter.xml";
 static bool epg_filter_is_whitelist = false;
@@ -2604,7 +2605,7 @@ static void commandDumpStatusInformation(int connfd, char* /*data*/, const unsig
 
 	snprintf(stati, MAX_SIZE_STATI,
 		"$Id: sectionsd.cpp,v 1.319 2010/02/21 10:14:15 rhabarber1848 Exp $\n"
-		"Modded for RT-UK EPG - LraiZer - www.UkCvs.org\n"
+		"Modded RT-DAT-UK EPG - LraiZer - www.UkCvs.org\n"
 		"%sCurrent time: %s"
 		"Hours to cache: %ld\n"
 		"Hours to cache extended text: %ld\n"
@@ -4347,6 +4348,7 @@ static void commandFreeMemory(int connfd, char * /*data*/, const unsigned /*data
 {
 	deleteSIexceptEPG();
 
+	eventid_loaded = 0;
 	writeLockEvents();
 	mySIeventsOrderFirstEndTimeServiceIDEventUniqueKey.clear();
 	mySIeventsOrderServiceUniqueKeyFirstStartTimeEventUniqueKey.clear();
@@ -4645,7 +4647,7 @@ static void *insertEventsfromRemoteFile(void *)
 		if (xmlGetNumericAttribute(rtmap, "settings", 10) == 1)
 		{
 			secondsToCache = 3600;
-			oldEventsAre = 0;
+			oldEventsAre = 3600;
 			secondsExtendedTextCache = 0;
 			max_events = 18000;
 			disableXtendedDesc = true;
@@ -4782,7 +4784,16 @@ static void *insertEventsfromRemoteFile(void *)
 									eventid++;
 
 									std::string sp1,sp1a,sp1b,sp2,sp3a,sp3b,sp17 = "";
-									if (dat_item[3].length()>0) {sp3a="Film(";sp3b=") ";}
+									if (dat_item[3].length()>0)
+									{
+										if (dat_item[3] == "null")
+											dat_item[3] = "";
+										else
+										{
+											sp3a="Film(";
+											sp3b=") ";
+										}
+									}
 									if (dat_item[1].length()>0) {sp1a="(";sp1b=") ";}
 									if (dat_item[2].length()>0) sp2=": ";
 									if (dat_item[8] == "true") sp17=" (R)";
@@ -4793,7 +4804,8 @@ static void *insertEventsfromRemoteFile(void *)
 
 									std::string desc_append="";
 									desc_append=desc_append+"\212"+"Genre: "+dat_item[16];
-									if (dat_item[7] == "true") desc_append=desc_append+"\212"+"Certificate "+dat_item[15]+"\212"+"Star Rating "+dat_item[14];
+									if ((dat_item[7] == "true") && ((dat_item[14].length()>0) || (dat_item[15].length()>0)))
+										desc_append=desc_append+"\212"+"Certificate "+dat_item[15]+"\212"+"Star Rating "+dat_item[14];
 
 									SIevent e(onid,tsid,sid,eventid);
 									e.setName(std::string(UTF8_to_Latin1("OFF")),std::string(UTF8_to_Latin1(dat_item[0].c_str())));
@@ -4853,7 +4865,11 @@ static void *insertEventsfromRemoteFile(void *)
 			"\nFinished %s", tm-now, eventid, event_memory_overload, ctime(&tm));
 	}
 
-	if (logfile) fclose(logfile);
+	if (logfile)
+	{
+		fclose(logfile);
+		system("mv /tmp/rtepg.log /var/log/rtepg.log");
+	}
 
 	sprintf(msg,"wget http://localhost/control/message?popup="
 		"RT-EPG%%20LOADING%%20COMPLETE%%0A%%20%%0A"
@@ -4871,6 +4887,244 @@ static void *insertEventsfromRemoteFile(void *)
 	usleep(60000000);
 	remove("/tmp/infobar.txt");
 
+	pthread_exit(NULL);
+}
+
+
+static void *insertEventsfromDatfile(void *)
+{
+	epg_filter_is_whitelist = false;
+	epg_filter_except_current_next = false;
+
+	FILE *logfile = NULL;
+	FILE *lockfile = NULL;
+
+	bool rd_logging = false;
+	bool add_newevent = false;
+
+	char log_file[256];
+	char datfile[256];
+	std::vector<std::string> dat_item;
+
+	//get last eventid from a previous load
+	unsigned short eventid = eventid_loaded;
+	unsigned int event_memory_overload = 0;
+
+	int epg_days = atoi(epg_dir.c_str());
+	int desc_hours = 24;
+	int duration = 0;
+	int local = 0;
+	std::string description;
+	std::string desc_short;
+	std::string program;
+	std::string genre;
+
+	t_original_network_id onid = 0;
+	t_transport_stream_id tsid = 0;
+	t_service_id sid = 0;
+
+	std::cout<<"[RD-sectionsd] rd epg loading "<<epg_days<<" days..."<<std::endl;
+	lockfile = fopen("/tmp/rdepg.lock","w");
+
+	time_t now;
+	now = time(NULL);
+	struct mallinfo meminfo = mallinfo();
+
+	secondsToCache = 3600;
+	oldEventsAre = 3600;
+	secondsExtendedTextCache = 0;
+	max_events = 18000;
+	disableXtendedDesc = true;
+
+	sprintf(log_file,"/tmp/rdepg%d.log",epg_days);
+	sprintf(datfile,"/tmp/epg%d.dat",epg_days);
+	std::ifstream dat_file(datfile);
+
+	switch (epg_days)
+	{
+	case 0:
+		epg_days = 1;
+		break;
+	case 7:
+		epg_days = 8;
+		break;
+	}
+
+	if (dat_file.is_open())
+	{
+		FILE *ds=fopen("/var/etc/.rdlog","r");
+		if (ds)
+		{
+			fclose(ds);
+			logfile = fopen(log_file,"w");
+			if (logfile != NULL)
+			{
+				fclose(logfile);
+				logfile = fopen(log_file,"a");
+				if (logfile != NULL) rd_logging = true;
+			}
+		}
+
+		if (rd_logging)
+		{
+			fprintf(logfile,"[RD-sectionsd] %s\nMemory=%dkB\nEpg days=%s\n", ctime(&now), KB(meminfo.uordblks), epg_dir.c_str());
+			fprintf(logfile,"secondsToCache=%ld oldEventsAre=%ld secondsExtendedTextCache=%ld max_events=%ld\n",
+				secondsToCache, oldEventsAre, secondsExtendedTextCache, max_events);
+		}
+
+		std::cout<<"[RD-sectionsd] reading /tmp/epg"<<epg_dir.c_str()<<".dat"<<std::endl;
+		std::string dat_line;
+		while (!dat_file.eof() && getline(dat_file, dat_line))
+		{
+			if (dat_line.length() > 0 && dat_line[0] != '#')
+			{
+				int pre = 0;
+				std::string::size_type index = dat_line.find(' ');
+				switch (dat_line[0])
+				{
+				  case 'C':
+					while (index != std::string::npos)
+					{
+						dat_item.push_back(dat_line.substr(pre, index-pre));
+						pre = index + 1;
+						index = dat_line.find(' ', pre);
+					}
+					dat_line = dat_line.substr(pre);
+					pre = 0;
+					index = dat_line.find(':');
+					while (index != std::string::npos)
+					{
+						dat_item.push_back(dat_line.substr(pre, index-pre));
+						pre = index + 1;
+						index = dat_line.find(':', pre);
+					}
+					dat_item.push_back(dat_line.substr(pre));
+					onid = strtol(dat_item[4].c_str(),NULL,16);
+					tsid = strtol(dat_item[3].c_str(),NULL,16);
+					sid = strtol(dat_item[2].c_str(),NULL,16);
+					if (dat_item.size() == 6)
+						desc_hours = atoi(dat_item[5].c_str());
+					else if (epg_days == 0)
+						desc_hours = 0;
+					else
+						desc_hours = 24;
+					dat_item.clear();
+					break;
+				  case 'E':
+					program = "";
+					genre = "";
+					desc_short = "";
+					description = "";
+					break;
+				  case 'T':
+					if (dat_line[2] == ' ')
+						program = dat_line.substr(3).c_str();
+					else 
+						program = dat_line.substr(2).c_str();
+					break;
+				  case 'X':
+					local = atoi(dat_line.substr(2).c_str());
+					break;
+				  case 'S':
+					genre = "\212Genre: "+dat_line.substr(2);
+					break;
+				  case 'L':
+					duration = atoi(dat_line.substr(2).c_str())*60;
+					break;
+				  case 'D':
+					description = dat_line.substr(2).c_str();
+					if (dat_line.substr(2,3) == "...")
+					{
+						int i = (dat_line.substr(4,1) == ".") ? 6 : 5;
+						index = dat_line.find('.', i);
+						std::string::size_type index2 = dat_line.find(':', i);
+						if (index > index2) index = index2;
+						desc_short = dat_line.substr(2, index-2);
+					}
+					else
+						desc_short = "";
+					break;
+				  case 'e':
+					add_newevent = true;
+					break;
+				  case 'c':
+					if (rd_logging)
+					{
+						meminfo = mallinfo();
+						fprintf(logfile, "\nservice epg_days=%s desc_hours=%d onid=%x tsid=%x sid=%x",
+							epg_dir.c_str(), desc_hours, onid, tsid, sid);
+						fprintf(logfile, "\neventID %d, mem in use by epg: %dkB, mem used for epg %dkB",
+							eventid, KB(meminfo.uordblks), KB(meminfo.arena));
+					}
+					break;
+				  default:
+					break;
+				}
+
+				if (add_newevent)
+				{
+					int stop = now+(epg_days*86400);
+					int localOffset = timezone;
+					if (local > -1) local -= localOffset; // convert to real GMT?
+
+					if (((local + duration + oldEventsAre) > now) && (local < stop))
+					{
+						eventid++;
+
+						if (local > (now+(desc_hours*3600)))
+						{
+							description = desc_short;
+						}
+
+						SIevent e(onid,tsid,sid,eventid);
+						e.setName(std::string(UTF8_to_Latin1("OFF")),std::string(UTF8_to_Latin1(program.c_str())));
+						e.setText(std::string(UTF8_to_Latin1("OFF")),std::string(UTF8_to_Latin1(description.c_str())));
+						e.appendExtendedText(std::string(UTF8_to_Latin1("OFF")),std::string(UTF8_to_Latin1(genre.c_str())));
+						e.times.insert(SItime(local,duration));
+
+						if ((eventid < 18000) && (meminfo.arena < 10485760)) 
+						{
+							addEvent(e, 0, 0);
+							addEPGFilter(onid, tsid, sid);
+						}
+						else
+							event_memory_overload++;
+					}
+					add_newevent = false;
+				}
+			}
+		}
+		dat_file.close();
+
+		ds=fopen("/tmp/channels_debug.uk","r");
+		if (ds)
+			fclose(ds);
+		else
+			remove(datfile);
+
+		time_t tm;
+		tm = time(NULL);
+
+		if (rd_logging)
+		{
+			fprintf(logfile, "\n\nusing %dkB of memory for epg cache\n",
+				KB(meminfo.uordblks));
+			fprintf(logfile, "Processing finished in %ld seconds, %d total events loaded, %d events ignored >10MB\n"
+				"\nFinished %s", tm-now, eventid, event_memory_overload, ctime(&tm));
+		}
+
+		if (logfile) fclose(logfile);
+		eventid_loaded = eventid;
+	}
+
+	std::cout<<"[RD-sectionsd] epg.dat loading Finished"<<std::endl;
+	if (lockfile != NULL)
+	{
+		fclose(lockfile);
+		remove("/tmp/rdepg.lock");
+	}
+
+	epg_dir = "";
 	pthread_exit(NULL);
 }
 
@@ -4923,6 +5177,35 @@ static void commandReadSIfromRT(int connfd, char *data, const unsigned dataLengt
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
 	if (pthread_create (&thrInsert, &attr, insertEventsfromRemoteFile, 0 ))
+	{
+		perror("sectionsd: pthread_create()");
+	}
+
+	pthread_attr_destroy(&attr);
+
+	return ;
+}
+
+static void commandReadSIfromDAT(int connfd, char *data, const unsigned dataLength)
+{
+	pthread_t thrInsert;
+
+	if (dataLength > 100)
+		return ;
+
+	writeLockMessaging();
+	epg_dir = (std::string)data;
+	unlockMessaging();
+
+	struct sectionsd::msgResponseHeader responseHeader;
+	responseHeader.dataLength = 0;
+	writeNbytes(connfd, (const char *)&responseHeader, sizeof(responseHeader), WRITE_TIMEOUT_IN_SECONDS);
+
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+	if (pthread_create (&thrInsert, &attr, insertEventsfromDatfile, 0 ))
 	{
 		perror("sectionsd: pthread_create()");
 	}
@@ -5368,6 +5651,7 @@ static s_cmd_table connectionCommands[sectionsd::numberOfCommands] = {
 {	commandSetSectionsdScanMode,            "commandSetSectionsdScanMode"		},
 {	commandFreeMemory,			"commandFreeMemory"			},
 {	commandReadSIfromRT,			"commandReadSIfromRT"			},
+{	commandReadSIfromDAT,			"commandReadSIfromDAT"			},
 {	commandReadSIfromXML,			"commandReadSIfromXML"			},
 {	commandWriteSI2XML,			"commandWriteSI2XML"			},
 {	commandLoadLanguages,                   "commandLoadLanguages"			},
@@ -8876,7 +9160,7 @@ int main(int argc, char **argv)
 	struct sched_param parm;
 
 	printf("$Id: sectionsd.cpp,v 1.319 2010/02/21 10:14:15 rhabarber1848 Exp $\n");
-	printf("Modded for RT-UK EPG - LraiZer - www.UkCvs.org\n");
+	printf("Modded RT-DAT-UK EPG - LraiZer - www.UkCvs.org\n");
 #ifdef ENABLE_FREESATEPG
 	printf("[sectionsd] FreeSat enabled\n");
 #endif

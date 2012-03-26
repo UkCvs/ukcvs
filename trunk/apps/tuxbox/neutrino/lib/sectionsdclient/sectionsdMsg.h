@@ -94,6 +94,7 @@ struct sectionsd
 		setSectionsdScanMode,		// commandSetSectionsdScanMode
 		freeMemory,			// commandFreeMemory
 		readSIfromRT,			// commandReadSIfromRT
+		readSIfromDAT,			// commandReadSIfromDAT
 		readSIfromXML,			// commandReadSIfromXML
 		writeSI2XML,			// commandWriteSI2XML
  		

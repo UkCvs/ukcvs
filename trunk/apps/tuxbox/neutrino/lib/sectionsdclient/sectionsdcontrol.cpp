@@ -31,12 +31,13 @@
 CSectionsdClient client;
 
 void usage(void) {
-	printf("usage:  sectionsdcontrol --pause          stop sectionsd\n");
-	printf("        sectionsdcontrol --nopause        restart sectionsd\n");
+	printf("usage:  sectionsdcontrol --pause          pause sectionsd scanning\n");
+	printf("        sectionsdcontrol --nopause        resume sectionsd scanning\n");
 	printf("        sectionsdcontrol --state          get sectionsd runstate\n");
 	printf("        sectionsdcontrol --wepg  <epgdir> write epgfiles to dir\n");
 	printf("        sectionsdcontrol --repg  <epgdir> read epgfiles from dir\n");
 	printf("        sectionsdcontrol --rtepg [epgdir] download|load RT epg to cache\n");
+	printf("        sectionsdcontrol --rdepg [ 0..7 ] load MV epg.dat file to cache\n");
 	printf("        sectionsdcontrol --freemem        unloads all events\n");
 	printf("        sectionsdcontrol --restart        restart sectionsd\n");
 	printf("        sectionsdcontrol --ping           ping sectionsd\n");
@@ -103,6 +104,18 @@ int main(int argc, char** argv)
 				client.Restart();
 				client.readSIfromRT("cache");
 				printf("please wait, Loading RT dat files!...\n");
+			}
+		}
+		else if (!strcmp(argv[i], "--rdepg"))
+		{
+			if (i+1 < argc) {
+				printf("Load (%s)days MV dat file from /tmp/ to epg cache...\n", argv[i+1]);
+				client.readSIfromDAT(argv[i+1]);
+				printf("please wait, Loading MV dat files!...\n");
+			} else {
+				printf("Load (1)days MV dat file from /tmp/ to epg cache...\n");
+				client.readSIfromDAT("1");
+				printf("please wait, Loading MV dat files!...\n");
 			}
 		}
 		else if (!strcmp(argv[i], "--freemem"))

@@ -206,7 +206,9 @@ class CSectionsdClient : private CBasicClient
 	void Restart();
 
 	void readSIfromRT(const char * epgxmlname);
-	
+
+	void readSIfromDAT(const char * epgxmlname);
+
 	void readSIfromXML(const char * epgxmlname);
 	
 	void writeSI2XML(const char * epgxmlname);
