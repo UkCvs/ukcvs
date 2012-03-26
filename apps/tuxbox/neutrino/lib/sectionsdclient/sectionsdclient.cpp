@@ -795,6 +795,14 @@ void CSectionsdClient::readSIfromRT(const char * epgxmlname)
 	close_connection();
 }
 
+void CSectionsdClient::readSIfromDAT(const char * epgxmlname)
+{
+	send(sectionsd::readSIfromDAT, (char*) epgxmlname, strlen(epgxmlname) + 1); // include '\0'
+
+	readResponse();
+	close_connection();
+}
+
 void CSectionsdClient::readSIfromXML(const char * epgxmlname)
 {
 	send(sectionsd::readSIfromXML, (char*) epgxmlname, strlen(epgxmlname) + 1); // include '\0'
