@@ -804,7 +804,7 @@ int CNeutrinoApp::loadSetup()
 	const char* usermenu_default[SNeutrinoSettings::BUTTON_MAX]={
 		"2,3,4,16",			// RED
 		"6",				// GREEN
-		"7",				// YELLOW
+		"3",				// YELLOW
 		"9,8,1,15,1,10,11,13,1,14,5"	// BLUE
 	};
 	char txt1[81];
@@ -814,7 +814,10 @@ int CNeutrinoApp::loadSetup()
 	{
 		snprintf(txt1,80,"usermenu_tv_%s_text",usermenu_button_def[button]);
 		txt1[80] = 0; // terminate for sure
-		g_settings.usermenu_text[button] = configfile.getString(txt1, "" );
+		if(usermenu_default[button] == "3")
+			g_settings.usermenu_text[button] = configfile.getString(txt1, "Guide" );
+		else
+			g_settings.usermenu_text[button] = configfile.getString(txt1, "" );
 
 		snprintf(txt1,80,"usermenu_tv_%s",usermenu_button_def[button]);
 		txt2 = configfile.getString(txt1,usermenu_default[button]);
