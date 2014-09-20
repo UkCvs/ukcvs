@@ -47,6 +47,8 @@ uint processed_transponders;
 uint32_t actual_freq;
 uint actual_polarisation;
 bool scan_mode = false;
+uint16_t netid;
+TP_params TP;
 bool one_flag;
 int one_tpid, one_onid;
 static bool scan_should_be_aborted;
@@ -262,7 +264,7 @@ int get_nits(dvb_frontend_parameters *feparams, uint8_t polarization, const t_sa
 	if (frontend->setParameters(feparams, polarization, DiSEqC) < 0)
 		return -1;
 
-	if ((status = parse_nit(satellite_position, DiSEqC)) <= -2) /* nit unavailable */
+	if ((status = parse_nit(satellite_position, DiSEqC, netid)) <= -2) /* nit unavailable */
 	{
 		uint32_t tsid_onid = get_sdt_TsidOnid();
 	
@@ -542,10 +544,21 @@ int scan_transponder(xmlNodePtr transponder, const t_satellite_position satellit
 	/* cable */
 	if (frontend->getInfo()->type == FE_QAM)
 	{
-		feparams.u.qam.symbol_rate = xmlGetNumericAttribute(transponder, "symbol_rate", 0);
-		feparams.u.qam.fec_inner = CFrontend::xml2FEC(xmlGetNumericAttribute(transponder, "fec_inner", 0));
-		feparams.u.qam.modulation = CFrontend::getModulation(xmlGetNumericAttribute(transponder, "modulation", 0));
 		diseqc_pos = 0;
+		if (scan_mode)
+		{
+			feparams.frequency = xmlGetNumericAttribute(transponder, "frequency", 0);
+			feparams.u.qam.symbol_rate = xmlGetNumericAttribute(transponder, "symbol_rate", 0);
+			feparams.u.qam.fec_inner = CFrontend::xml2FEC(xmlGetNumericAttribute(transponder, "fec_inner", 0));
+			feparams.u.qam.modulation = CFrontend::getModulation(xmlGetNumericAttribute(transponder, "modulation", 0));
+		}
+		else
+		{
+			feparams.frequency = TP.feparams.frequency;
+			feparams.u.qam.symbol_rate = TP.feparams.u.qam.symbol_rate;
+			feparams.u.qam.fec_inner = TP.feparams.u.qam.fec_inner;
+			feparams.u.qam.modulation = TP.feparams.u.qam.modulation;
+		}
 	}
 
 	/* satellite */
@@ -588,7 +601,10 @@ int scan_transponder(xmlNodePtr transponder, const t_satellite_position satellit
 	polarization = xmlGetNumericAttribute(transponder, "polarization", 0);
 	feparams.polarity = polarization;
 #endif
-	feparams.frequency = xmlGetNumericAttribute(transponder, "frequency", 0);
+
+	if (frontend->getInfo()->type != FE_QAM)
+		feparams.frequency = xmlGetNumericAttribute(transponder, "frequency", 0);
+
 		/* read network information table */
 	status = get_nits(&feparams, polarization, satellite_position, diseqc_pos);
 
@@ -627,18 +643,24 @@ void scan_provider(xmlNodePtr search, const char * const providerName, uint8_t d
 
 	/* send sat name to client */
 	eventServer->sendEvent(CZapitClient::EVT_SCAN_SATELLITE, CEventServer::INITID_ZAPIT, providerName, strlen(providerName) + 1);
-	transponder = search->xmlChildrenNode;
 
-	/* read all transponders */
-	while ((transponder = xmlGetNextOccurence(transponder, "transponder")) != NULL)
-	{
-		if (scan_should_be_aborted)
-			return;
-		scan_transponder(transponder, satellite_position, diseqc_pos);
-		DBG("after scan_transponder, found_transponders: %d", found_transponders);
+	if ((frontend->getInfo()->type == FE_QAM) && (!scan_mode))
+		scan_transponder(NULL, satellite_position, diseqc_pos);
+	else	
+  	{
+		transponder = search->xmlChildrenNode;
 
-		/* next transponder */
-		transponder = transponder->xmlNextNode;
+		/* read all transponders */
+		while ((transponder = xmlGetNextOccurence(transponder, "transponder")) != NULL)
+		{
+			if (scan_should_be_aborted)
+				return;
+			scan_transponder(transponder, satellite_position, diseqc_pos);
+			DBG("after scan_transponder, found_transponders: %d", found_transponders);
+
+			/* next transponder */
+			transponder = transponder->xmlNextNode;
+		}
 	}
 
 	/*
@@ -692,7 +714,9 @@ void *start_scanthread(void *imsg)
 	CZapitMessages::startScan *msg = (CZapitMessages::startScan*)imsg;
 	/* copy the message contents, since it will get freed in the calling function... */
 	scan_mode = msg->scan_mode;
-	int8_t diseqc = msg->diseqc;
+	int8_t diseqc = msg->TP.diseqc;
+	netid = msg->netid;
+	TP = msg->TP;
 	FILE * fd;
 	char providerName[32] = "";
 	const char * frontendType;

@@ -642,12 +642,13 @@ void CZapitClient::sendMotorCommand(uint8_t cmdtype, uint8_t address, uint8_t cm
 /***********************************************/
 
 /* start TS-Scan */
-bool CZapitClient::startScan(const bool  scan_mode, int8_t diseqc)
+bool CZapitClient::startScan(const bool scan_mode, TP_params TP, uint16_t netid)
 {
 	CZapitMessages::startScan msg;
 
 	msg.scan_mode = scan_mode;
-	msg.diseqc = diseqc;
+	msg.TP = TP;
+	msg.netid = netid;
 
 	bool reply = send(CZapitMessages::CMD_SCANSTART, (char*)&msg, sizeof(msg));
 

@@ -244,7 +244,7 @@ void CBouquetManager::saveBouquets(bool includeBouquetOthers)
 	for (BouquetList::const_iterator it = Bouquets.begin(); it != Bouquets.end(); ++it)
 	{
 		// TODO: use locales
-		if (includeBouquetOthers || (((*it) != remainChannels) && (strncmp((*it)->Name.c_str(),"Neue Sender",11) != 0)))
+		if (includeBouquetOthers || (((*it) != remainChannels) && (strncmp((*it)->Name.c_str(),"New Channels",12) != 0)))
 		{
 			//fprintf(bouq_fd, "\t<Bouquet name=\"%s\" hidden=\"%d\" locked=\"%d\">\n",
 			fprintf(bouq_fd, "\t<Bouquet type=\"%01x\" bouquet_id=\"%04x\" name=\"%s\" hidden=\"%01x\" locked=\"%01x\">\n",
@@ -287,6 +287,15 @@ void CBouquetManager::saveBouquets(const CZapitClient::bouquetMode bouquetMode)
 	}
 */	
 //	printf("[zapit] b mode sat \n");
+
+	bool sortalpha = config.getBool("scanSortByName", false);
+	for (BouquetList::const_iterator it = Bouquets.begin(); it != Bouquets.end(); it++)
+	{
+		if (sortalpha)
+			sort((*it)->tvChannels.begin(), (*it)->tvChannels.end(), CmpChannelByChName());
+		else
+			sort((*it)->tvChannels.begin(), (*it)->tvChannels.end(), CmpChannelByChNum());
+	}
 
 	if ((bouquetMode == CZapitClient::BM_UPDATEBOUQUETS) || (bouquetMode == CZapitClient::BM_CREATESATELLITEBOUQUET))
 	{
@@ -519,7 +528,7 @@ void CBouquetManager::makeRemainingChannelsBouquet(void)
 	}
 
 	// TODO: use locales
-	remainChannels = addBouquet(Bouquets.empty() ? "Alle Kan\xC3\xA4le" : "Andere"); // UTF-8 encoded
+	remainChannels = addBouquet(Bouquets.empty() ? "All Channels" : "Other"); // UTF-8 encoded
 
 	for (tallchans::iterator it = allchans.begin(); it != allchans.end(); ++it)
 		if (chans_processed.find(it->first) == chans_processed.end())
@@ -612,7 +621,7 @@ bool CBouquetManager::existsChannelInBouquet( unsigned int bq_id, const t_channe
 }
 
 
-void CBouquetManager::moveBouquet(const unsigned int oldId, const unsigned int newId)
+bool CBouquetManager::moveBouquet(const unsigned int oldId, const unsigned int newId)
 {
 	if ((oldId < Bouquets.size()) && (newId < Bouquets.size()))
 	{
@@ -625,7 +634,10 @@ void CBouquetManager::moveBouquet(const unsigned int oldId, const unsigned int n
 		it = Bouquets.begin();
 		advance(it, newId);
 		Bouquets.insert(it, tmp);
+
+		return true;
 	}
+	return false;
 }
 
 void CBouquetManager::clearAll()

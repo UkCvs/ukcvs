@@ -53,8 +53,11 @@
 #include <neutrino.h>
 
 #ifdef HAVE_TRIPLEDRAGON
-#elif HAVE_DVB_API_VERSION >= 3
-#else
+#elif HAVE_DVB_API_VERSION < 3
+#define frequency Frequency
+#define symbol_rate SymbolRate
+#define fec_inner FEC_inner
+#define modulation QAM
 #include <ost/frontend.h>
 #include <ost/sec.h>
 #endif
@@ -111,25 +114,17 @@ printf("[neutrino] TP_scan %d TP_freq %s TP_rate %s TP_fec %d TP_pol %d TP_mod %
 	// manual TP scan
 	if(get_set.TP_scan == CScanTs::SCAN_ONE_TP)
 	{
-#ifdef HAVE_TRIPLEDRAGON
-		TP.feparams.frequency = atoi(get_set.TP_freq);
-		TP.feparams.symbolrate = atoi(get_set.TP_rate);
-		TP.feparams.fec = get_set.TP_fec;
-#elif HAVE_DVB_API_VERSION < 3
-		TP.feparams.Frequency = atoi(get_set.TP_freq);
-		TP.feparams.u.qpsk.SymbolRate = atoi(get_set.TP_rate);
-		TP.feparams.u.qpsk.FEC_inner = (CodeRate)get_set.TP_fec;
-#else
-		TP.feparams.frequency = atoi(get_set.TP_freq);
-		if(g_info.delivery_system == DVB_S) {
+		if(g_info.delivery_system == DVB_C)
+		{
+			TP.feparams.frequency = (atoi(get_set.TP_freq) * 1000);
+			TP.feparams.u.qam.symbol_rate = (get_set.symrate * 1000);
+			TP.feparams.u.qam.fec_inner = (fe_code_rate_t) 3;
+			TP.feparams.u.qam.modulation = (fe_modulation_t) 3;
+		} else {
+			TP.feparams.frequency = atoi(get_set.TP_freq);
 			TP.feparams.u.qpsk.symbol_rate = atoi(get_set.TP_rate);
 			TP.feparams.u.qpsk.fec_inner = (fe_code_rate_t) get_set.TP_fec;
-		} else {
-			TP.feparams.u.qam.symbol_rate = atoi(get_set.TP_rate);
-			TP.feparams.u.qam.fec_inner = (fe_code_rate_t) get_set.TP_fec;
-			TP.feparams.u.qam.modulation = (fe_modulation_t) get_set.TP_mod;
 		}
-#endif
 		TP.polarization = get_set.TP_pol;
 		TP.diseqc = (uint8_t)get_set.TP_diseqc;
 // printf("[neutrino] freq %d rate %d fec %d pol %d\n", TP.feparams.Frequency, TP.feparams.u.qpsk.SymbolRate, TP.feparams.u.qpsk.FEC_inner, TP.polarization);
@@ -181,15 +176,21 @@ printf("[neutrino] TP_scan %d TP_freq %s TP_rate %s TP_fec %d TP_pol %d TP_mod %
 	/* go */
 	if (get_set.TP_scan == CScanTs::SCAN_ONE_TP)
 	{
-		success = g_Zapit->scan_TP(TP);
+		if(g_info.delivery_system == DVB_C)
+			success = g_Zapit->startScan(false, TP, atoi(get_set.netid));
+		else		
+			success = g_Zapit->scan_TP(TP);
 	}
 	else if (get_set.TP_scan == CScanTs::SCAN_ONE_SAT)
 	{
-		success = g_Zapit->startScan(get_set.scan_mode, (uint8_t)get_set.TP_diseqc);
+		success = g_Zapit->startScan(get_set.scan_mode, TP);
 	}
 	else	// CScanTs::SCAN_COMPLETE
 	{
-		success = g_Zapit->startScan(get_set.scan_mode);
+		if(g_info.delivery_system == DVB_C)		
+			success = g_Zapit->startScan(true);
+		else
+			success = g_Zapit->startScan(get_set.scan_mode);
 	}
 	start_time = time(NULL);
 	paint();
@@ -304,7 +305,7 @@ int CScanTs::handleMsg(neutrino_msg_t msg, neutrino_msg_data_t data)
 			msg = CRCInput::RC_timeout;
 			break;
 		case CRCInput::RC_home:
-			if (get_set.TP_scan == CScanTs::SCAN_ONE_TP) // only if we scan a whole sat...
+			if ((get_set.TP_scan == CScanTs::SCAN_ONE_TP) && (g_info.delivery_system != DVB_C)) // only if we scan a whole sat...
 				break;
 
 			if (ShowLocalizedMessage(LOCALE_SCANTS_ABORT_HEADER, LOCALE_SCANTS_ABORT_BODY, CMessageBox::mbrNo, CMessageBox::mbYes | CMessageBox::mbNo) == CMessageBox::mbrYes)
