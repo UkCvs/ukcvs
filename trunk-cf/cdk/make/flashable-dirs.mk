@@ -165,9 +165,9 @@ $(flashprefix)/root-% $(flashprefix)/root $(flashprefix)/root-neutrino
 if BOXTYPE_DREAMBOX
 	$(MAKE) flash-dreamfiles dreamfilesrootdir=$@
 # ugly hack: neutrino uses the slightly different satellites.xml format from dbox
-	if [ -e $@/bin/neutrino ]; then \
-		cp $(flashprefix)/root/share/tuxbox/satellites.xml $@/share/tuxbox/satellites.xml; \
-	fi
+#	if [ -e $@/bin/neutrino ]; then \
+#		cp $(flashprefix)/root/share/tuxbox/satellites.xml $@/share/tuxbox/satellites.xml; \
+#	fi
 else
 	$(MK_FSTAB_VARMOUNTS)
 	$(MK_FSTAB_IDEMOUNTS)
@@ -445,8 +445,13 @@ if !ENABLE_UCLIBC
 	ln -sf libgcc_s_nof.so.1 $(dreamfilesrootdir)/lib/libgcc_s.so.1
 endif
 if BOXMODEL_DM500
+# create read-only symlinks and install xml to read-write /var/etc
 	for i in cables.xml satellites.xml terrestrial.xml; do \
-		ln -sf tuxbox/$$i $(dreamfilesrootdir)/share; \
+		if [ -f $(dreamfilesrootdir)/share/tuxbox/$$i ]; then \
+			mv -f $(dreamfilesrootdir)/share/tuxbox/$$i $(dreamfilesrootdir)/var_init/etc; \
+		fi; \
+		ln -sf /var/etc/$$i $(dreamfilesrootdir)/share/tuxbox/$$i; \
+		ln -sf /var/etc/$$i $(dreamfilesrootdir)/share/$$i; \
 	done;
 else
 	@ln -sf tuxbox/satellites.xml $(dreamfilesrootdir)/share;
