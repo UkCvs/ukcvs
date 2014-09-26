@@ -6,6 +6,12 @@ export INSMOD="/sbin/insmod"
 export RMMOD="/sbin/rmmod"
 export MODDIR="/lib/modules/"$(uname -r)
 #export TZ=CET-1CEST,M3.5.0/2,M10.5.0/3
+
+# do not mount jffs2 when not booting from flash
+if [ ! -e /root/platform/kernel/bild ] ; then
+	mount -t jffs2 /dev/mtdblock/1 /var
+fi
+
 /etc/init.d/init1
 
 #set environment variables ( mID )
@@ -18,11 +24,6 @@ if [ $mID -ne 07 ] ; then
 	if [ $init -eq 1 ] ; then
 		/bin/eraseall /dev/mtd/1
 	fi
-fi
-
-# do not mount jffs2 when not booting from flash
-if [ ! -e /root/platform/kernel/bild ] ; then
-	mount -t jffs2 /dev/mtdblock/1 /var
 fi
 
 # if dm 7000
