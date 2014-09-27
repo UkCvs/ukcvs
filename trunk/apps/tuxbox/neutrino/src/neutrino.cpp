@@ -2050,7 +2050,7 @@ int CNeutrinoApp::run(int argc, char **argv)
 			fclose(f);
 		}
 		loadLocale_ret = g_Locale->loadLocale(g_settings.language);
-		display_language_selection = true;
+		display_language_selection = false;
 	}
 	else
 		display_language_selection = false;
