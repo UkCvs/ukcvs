@@ -29,6 +29,7 @@
 #include "eventlist.h"
 #include "infoviewer.h"
 #include "systeminfo.h"
+#include "camdmenu.h"
 #include "mainmenu.h"
 
 MainMenu::MainMenu()
@@ -73,6 +74,9 @@ void MainMenu::Settings()
 	scSettings->addItem(GenericMenuSeparator);
 	scSettings->addItem(GenericMenuBack);
 	scSettings->addItem(GenericMenuSeparatorLine);
+
+	//CamdMenu
+	scSettings->addItem(new CMenuForwarder(LOCALE_CAMDMENU_CAMDMENU, true, NULL, new CamdAuswahl(), NULL, CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED));
 
 	//SysInfo
 	CMenuWidget* scSysInfo = new CMenuWidget(LOCALE_MAINMENU_EXTRASMENU, "settings.raw");
