@@ -553,7 +553,7 @@ void CFlashExpert::readmtd(int mtd)
 	filename += ".img"; // US-ASCII (subset of UTF-8 and ISO8859-1)
 	if (mtd == -1)
 	{
-		filename = "/tmp/flashimage.img"; // US-ASCII (subset of UTF-8 and ISO8859-1)
+		filename = "/tmp/ukcvs-backup.img"; // US-ASCII (subset of UTF-8 and ISO8859-1)
 		mtd = CMTDInfo::getInstance()->findMTDNumberFromDescription(MTD_TEXT_OF_WHOLE_IMAGE); //MTD_OF_WHOLE_IMAGE;
 	}
 	setTitle(LOCALE_FLASHUPDATE_TITLEREADFLASH);
