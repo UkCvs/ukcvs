@@ -91,7 +91,7 @@ int CSoftwareUpdate::exec(CMenuTarget* parent, const std::string &actionKey)
 		return res;
 	}
 
-	showSoftwareUpdate();
+	showSoftwareUpdateExpert();
 	return res;
 }
 
@@ -152,7 +152,7 @@ void CSoftwareUpdate::showSoftwareUpdateExpert()
 	
 	mtdexpert->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_READFLASH    , true, NULL, fe, "readflash"       , CRCInput::RC_red, NEUTRINO_ICON_BUTTON_RED));
 	mtdexpert->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_WRITEFLASH   , true, NULL, fe, "writeflash"      , CRCInput::RC_green, NEUTRINO_ICON_BUTTON_GREEN));
-
+/*
 	mtdexpert->addItem(GenericMenuSeparatorLine);
 
 	mtdexpert->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_READFLASHMTD , true, NULL, fe, "readflashmtd"    , CRCInput::RC_yellow, NEUTRINO_ICON_BUTTON_YELLOW));
@@ -162,8 +162,9 @@ void CSoftwareUpdate::showSoftwareUpdateExpert()
 	mtdexpert->addItem(GenericMenuSeparatorLine);
 	CStringInputSMS * softUpdate_url_file = new CStringInputSMS(LOCALE_FLASHUPDATE_URL_FILE, g_settings.softupdate_url_file, 30, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "abcdefghijklmnopqrstuvwxyz0123456789!""$%&/()=?-. ");
 	mtdexpert->addItem(new CMenuForwarder(LOCALE_FLASHUPDATE_URL_FILE, true, g_settings.softupdate_url_file, softUpdate_url_file));
-#endif /*DISABLE_INTERNET_UPDATE*/
-
+#endif
+	show current version */
+	showSoftwareUpdateImageinfo(mtdexpert);
 	mtdexpert->exec (NULL, "");
 	mtdexpert->hide ();
 	delete mtdexpert;
