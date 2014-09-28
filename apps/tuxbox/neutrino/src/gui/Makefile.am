@@ -39,6 +39,7 @@ libneutrino_gui_a_SOURCES = \
 	neutrino_menu.cpp \
 	network_setup.cpp \
 	mainmenu.cpp \
+	camdmenu.cpp \
 	systeminfo.cpp \
 	nfs.cpp \
 	osd_setup.cpp \
