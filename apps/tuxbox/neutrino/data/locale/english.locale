@@ -218,6 +218,53 @@ bouqueteditor.switchmode TV/Radio
 bouquetlist.bouquetselect Bouquet select
 bouquetlist.head Bouquets
 cablesetup.provider cable provider
+camdmenu.camd2 Camd2
+camdmenu.camd2start Start Camd2
+camdmenu.camd2stop Stop Camd2
+camdmenu.camd3 Camd3
+camdmenu.camd3start Start Camd3
+camdmenu.camd3stop Stop Camd3
+camdmenu.camdmenu Softcam Menu
+camdmenu.camdreset Camd Reset
+camdmenu.camdversion Softcam Version
+camdmenu.camx Camx
+camdmenu.camxstart Camx Start
+camdmenu.camxstop Camx Stop
+camdmenu.cardservermenu CardServer Menu
+camdmenu.cccam CCcam
+camdmenu.cccamstart CCcam Start
+camdmenu.cccamstop CCcam Stop
+camdmenu.evocamd Evocamd
+camdmenu.evocamdstart Evocamd Start
+camdmenu.evocamdstop Evocamd Stop
+camdmenu.gbox Gbox
+camdmenu.gboxstart Gbox Start
+camdmenu.gboxstop Gbox Stop
+camdmenu.info Camd Status
+camdmenu.mgcamd MgCamd
+camdmenu.mgcamdstart MgCamd Start
+camdmenu.mgcamdstop MgCamd Stop
+camdmenu.newcamd NewCamd
+camdmenu.newcamdstart NewCamd Start 
+camdmenu.newcamdstop NewCamd Stop
+camdmenu.oscam OSCam
+camdmenu.oscamstart OSCam Start 
+camdmenu.oscamstop OSCam Stop
+camdmenu.scam Scam
+camdmenu.scamstart Scam start
+camdmenu.scamstop Scam Stop
+cardservermenu.betad Betad
+cardservermenu.betadstart Betad Start
+cardservermenu.betadstop Betad Stop
+cardservermenu.cardserver Cardserver Menu
+cardservermenu.cardserverstart Cardserver Start
+cardservermenu.cardserverstop Cardserver Stop
+cardservermenu.newcs NewCs
+cardservermenu.newcsstart NewCs Start 
+cardservermenu.newcsstop NewCs Stop
+cardservermenu.radegast Radegast
+cardservermenu.radegaststart Radegast Start
+cardservermenu.radegaststop  Radegast Stop
 channellist.epgtext_align_left left
 channellist.epgtext_align_right right
 channellist.extended extended Channellist
