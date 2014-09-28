@@ -123,6 +123,7 @@ void CBESysInfoWidget::paintHead()
        if(mode==2)sprintf((char *) buf, "%s", "System-Messages:");
        if(mode==3)sprintf((char *) buf, "%s", "CPU/Filesystem-Info:");
        if(mode==4)sprintf((char *) buf, "%s", "Memory/Process-List:");
+       if(mode==5)sprintf((char *) buf, "%s", "Camd-Info:");
 
        g_Font[SNeutrinoSettings::FONT_TYPE_MENU_TITLE]->RenderString(x+10,y+theight+0, width, buf, COL_MENUHEAD);
 }
@@ -192,6 +193,8 @@ int CBESysInfoWidget::exec(CMenuTarget* parent, const std::string & actionKey)
            cpuinfo();
        else if(mode==4)
            top();
+       else if(mode==5)
+           caminfo();
        else
        {
            //ShowHint("Alert", "Error", "info.raw", 430);
@@ -240,6 +243,14 @@ int CBESysInfoWidget::exec(CMenuTarget* parent, const std::string & actionKey)
                    {
                        timercount = 0;
                        top();
+                       paintHead();
+                       paint();
+                       paintFoot();
+                   }
+                   if (mode == 5)
+                   {
+                       timercount = 0;
+                       caminfo();
                        paintHead();
                        paint();
                        paintFoot();
@@ -523,6 +534,15 @@ int CBESysInfoWidget::top()
        /* Get Memory/Processlist from top*/
        system("top -n1 -b > /tmp/sysinfo");
        /* Get Memory/Processlist from top end*/
+
+       return(readList(sinbuffer));
+}
+
+int CBESysInfoWidget::caminfo()
+{
+       /* Get cam info from ecm.info*/
+       system("cat /tmp/ecm.info > /tmp/sysinfo");
+       /* Get cam info from ecm.info end*/
 
        return(readList(sinbuffer));
 }

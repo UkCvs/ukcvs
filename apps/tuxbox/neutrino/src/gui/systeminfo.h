@@ -69,6 +69,7 @@ class CBESysInfoWidget : public CMenuWidget
 		int dmesg();
 		int cpuinfo();
 		int top();
+		int caminfo();
 		int readList(struct sfileline *inbuffer);
 
 	public:
