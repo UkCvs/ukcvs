@@ -1,5 +1,5 @@
 FILES_FLASH_RO = \
-	bild
+	logo
 
 DIR = /root/platform/kernel
 
