@@ -1,5 +1,5 @@
-SUBDIRS = etc root share var_init
+SUBDIRS = kernel
 
-DIR = /
+DIR = /root/platform
 
 include $(top_srcdir)/root/Makefile.inc
