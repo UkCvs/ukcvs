@@ -1,4 +1,4 @@
-SUBDIRS = etc root share var_init
+SUBDIRS = bin etc root share var_init
 
 DIR = /
 

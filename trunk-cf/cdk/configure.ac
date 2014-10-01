@@ -1920,6 +1920,7 @@ case "${BOXTYPE}" in
 	dreambox)
 	AC_CONFIG_FILES([
 root_dream/Makefile
+root_dream/bin/Makefile
 root_dream/etc/Makefile
 root_dream/etc/init.d/Makefile
 root_dream/root/Makefile
@@ -1932,6 +1933,9 @@ root_dream/var_init/Makefile
 root_dream/var_init/etc/Makefile
 root_dream/var_init/etc/init.d/Makefile
 root_dream/var_init/etc/network/Makefile
+root_dream/var_init/spool/Makefile
+root_dream/var_init/spool/cron/Makefile
+root_dream/var_init/spool/cron/crontabs/Makefile
 root_dream/var_init/tuxbox/Makefile
 root_dream/var_init/tuxbox/config/Makefile
 root_dream/var_init/tuxbox/config/enigma/Makefile
