@@ -1,4 +1,4 @@
-SUBDIRS = etc spool tuxbox
+SUBDIRS = bin driver etc keys spool tuxbox
 
 DIR = /var_init
 

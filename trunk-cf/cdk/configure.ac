@@ -1930,9 +1930,13 @@ root_dream/share/Makefile
 root_dream/share/tuxbox/Makefile
 root_dream/share/udhcpc/Makefile
 root_dream/var_init/Makefile
+root_dream/var_init/bin/Makefile
+root_dream/var_init/bin/emu/Makefile
+root_dream/var_init/driver/Makefile
 root_dream/var_init/etc/Makefile
 root_dream/var_init/etc/init.d/Makefile
 root_dream/var_init/etc/network/Makefile
+root_dream/var_init/keys/Makefile
 root_dream/var_init/spool/Makefile
 root_dream/var_init/spool/cron/Makefile
 root_dream/var_init/spool/cron/crontabs/Makefile
