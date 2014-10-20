@@ -1,4 +1,5 @@
-FILES_FLASH_RO_EXEC = showframe
+FILES_FLASH_RO_EXEC = showframe \
+	epg-pause epg-restart
 
 DIR = /bin
 
