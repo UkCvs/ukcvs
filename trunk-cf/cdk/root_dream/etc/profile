@@ -1,13 +1,14 @@
 # /etc/profile
 
-export PATH="/sbin:/bin"
+export LD_LIBRARY_PATH=/tmp:/var/lib:/lib:$LD_LIBRARY_PATH
+export PATH="/sbin:/bin:/var/bin:/var/bin/emu"
 
 # get environment from info module
 . /proc/bus/dbox.sh                                                             
 
 # timezone, only applicable for middle europe
 if [ -e /bin/neutrino ]; then
-	export TZ=CET-1CEST,M3.5.0/2,M10.5.0/3
+	export TZ=GMT-0BST,M3.5.0/2,M10.5.0/3
 fi
 
 export PS1='\w > '
