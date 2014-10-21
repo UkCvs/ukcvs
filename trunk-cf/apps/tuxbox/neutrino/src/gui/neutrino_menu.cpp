@@ -96,7 +96,7 @@
 #include "driver_boot_setup.h"
 #include "osd_setup.h"
 #include "rc_lock.h"
-
+#include "mainmenu.h"
 
 #if ENABLE_UPNP
 #include "upnpbrowser.h"
@@ -439,7 +439,13 @@ bool CNeutrinoApp::showUserMenu(int button)
 	CMenuWidget *menu = new CMenuWidget(txt.c_str() , NEUTRINO_ICON_FEATURES, 400);
 	if (menu == NULL) 
 		return 0;
-	menu->addItem(GenericMenuSeparator);
+
+	//ExtrasMenu
+	if (button == SNeutrinoSettings::BUTTON_BLUE)
+	{
+		menu->addItem(new CMenuForwarder(LOCALE_MAINMENU_EXTRASMENU, true, NULL, new MainMenu(), NULL, CRCInput::RC_setup, NEUTRINO_ICON_BUTTON_MENU));
+		menu->addItem(GenericMenuSeparatorLine);
+	}
 	
 	// go through any postition number
 	for(int pos = 0; pos < SNeutrinoSettings::ITEM_MAX ; pos++)
