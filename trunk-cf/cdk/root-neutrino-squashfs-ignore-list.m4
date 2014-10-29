@@ -44,7 +44,7 @@ flashprefix/share/tuxbox/neutrino/locale/bayrisch.locale
 flashprefix/share/tuxbox/neutrino/locale/bosanski.locale
 flashprefix/share/tuxbox/neutrino/locale/ch-baslerdeutsch.locale
 flashprefix/share/tuxbox/neutrino/locale/ch-berndeutsch.locale
-#flashprefix/share/tuxbox/neutrino/locale/deutsch.locale
+flashprefix/share/tuxbox/neutrino/locale/deutsch.locale
 flashprefix/share/tuxbox/neutrino/locale/ellinika.locale
 flashprefix/share/tuxbox/neutrino/locale/francais.locale
 flashprefix/share/tuxbox/neutrino/locale/italiano.locale
