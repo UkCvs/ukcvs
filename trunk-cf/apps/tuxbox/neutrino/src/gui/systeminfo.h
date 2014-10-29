@@ -62,6 +62,7 @@ class CBESysInfoWidget : public CMenuTarget
 		int top();
 		int caminfo();
 		int readList(struct sfileline *inbuffer);
+		void correct_string(char *temp);
 
 	public:
 		CBESysInfoWidget(int m);

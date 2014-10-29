@@ -27,6 +27,7 @@ sreadline sysbuffer[(2*MAXLINES)];
 
 int slinecount,syscount;
 bool refreshIt = true;
+
 //Konstruktor
 CBESysInfoWidget::CBESysInfoWidget(int m)
 {
@@ -548,6 +549,16 @@ int CBESysInfoWidget::caminfo()
        return(readList(sinbuffer));
 }
 
+void CBESysInfoWidget::correct_string(char *temp)
+{
+	int z=0;
+	while (temp[z]!=0)
+	{
+		if((temp[z]>0)&&(temp[z]<32)) temp[z]=32;
+		z++;
+	}
+}
+
 //Infos auslesen
 int CBESysInfoWidget::readList(struct sfileline *sinbuffer)
 {
@@ -569,6 +580,7 @@ int CBESysInfoWidget::readList(struct sfileline *sinbuffer)
     while(fgets(line, 256, fp) != NULL)
     {
         line[256]='\0';
+	correct_string(line);
         memcpy(sysbuffer[syscount].line,line,256);
         sinbuffer[slinecount].state = true;
         //printf("%s", sysbuffer[syscount].line);
