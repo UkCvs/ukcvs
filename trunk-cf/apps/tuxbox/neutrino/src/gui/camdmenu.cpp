@@ -112,7 +112,7 @@ void CamdAuswahl::Settings()
 	//CCcam
 	int CCcam = 0;
 
-	FILE* fdCCcam = fopen("/var/etc/.CCcam", "r");
+	FILE* fdCCcam = fopen("/var/etc/.cccam", "r");
 	if(fdCCcam)
 	{
 		CCcam=1;
@@ -339,7 +339,7 @@ bool CamdAuswahl::CamdReset()
 	//CCcam
 	int CCcam = 0;
 
-	FILE* fdCCcam = fopen("/var/etc/.CCcam", "r");
+	FILE* fdCCcam = fopen("/var/etc/.cccam", "r");
 	if(fdCCcam)
 	{
 		CCcam=1;
@@ -573,7 +573,7 @@ bool CCCcamDestChangeNotifier::changeNotify(const neutrino_locale_t, void * Data
 	
 	if (CCcam == 1)
 	{
-		system("touch /var/etc/.CCcam");
+		system("touch /var/etc/.cccam");
 		system("epg-restart &");
 		system("sleep 1");
 		system("chmod 755 /var/bin/emu/CCcam");
@@ -588,7 +588,7 @@ bool CCCcamDestChangeNotifier::changeNotify(const neutrino_locale_t, void * Data
 	{
 		system("killall -9 CCcam");
 		system("killall -9 epg-restart");
-		system("rm /var/etc/.CCcam");
+		system("rm /var/etc/.cccam");
 		system("rm /tmp/ecm.info");
 		system("rm /tmp/ecm0.info");
 		ShowHintUTF(LOCALE_MESSAGEBOX_INFO, g_Locale->getText(LOCALE_CAMDMENU_CCCAMSTOP), 450, 2); // UTF-8("")
