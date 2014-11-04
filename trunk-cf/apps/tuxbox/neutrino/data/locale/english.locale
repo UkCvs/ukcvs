@@ -216,6 +216,7 @@ bouqueteditor.switch_to_channel Switch to channel
 bouqueteditor.switchmode TV/Radio
 bouquetlist.bouquetselect Bouquet select
 bouquetlist.head Bouquets
+cableregion.option Region
 cablesetup.provider cable provider
 camdmenu.camdmenu Softcam Menu
 camdmenu.camdreset Camd Reset
@@ -1320,9 +1321,6 @@ scantp.pol Polarization
 scantp.pol_h H
 scantp.pol_v V
 scantp.rate Symbol rate
-scantp.rate_6875 6875
-scantp.rate_6887 6887
-scantp.rate_6952 6952
 scantp.scan Scan Mode
 scantp.scan_all_sats All Sat
 scantp.scan_complete Complete

@@ -114,14 +114,13 @@ printf("[neutrino] TP_scan %d TP_freq %s TP_rate %s TP_fec %d TP_pol %d TP_mod %
 	// manual TP scan
 	if(get_set.TP_scan == CScanTs::SCAN_ONE_TP)
 	{
+		TP.feparams.frequency = atoi(get_set.TP_freq);
 		if(g_info.delivery_system == DVB_C)
 		{
-			TP.feparams.frequency = (atoi(get_set.TP_freq) * 1000);
-			TP.feparams.u.qam.symbol_rate = (get_set.symrate * 1000);
-			TP.feparams.u.qam.fec_inner = (fe_code_rate_t) 3;
-			TP.feparams.u.qam.modulation = (fe_modulation_t) 3;
+			TP.feparams.u.qam.symbol_rate = atoi(get_set.TP_rate);
+			TP.feparams.u.qam.fec_inner = (fe_code_rate_t) get_set.TP_fec;
+			TP.feparams.u.qam.modulation = (fe_modulation_t) get_set.TP_mod;
 		} else {
-			TP.feparams.frequency = atoi(get_set.TP_freq);
 			TP.feparams.u.qpsk.symbol_rate = atoi(get_set.TP_rate);
 			TP.feparams.u.qpsk.fec_inner = (fe_code_rate_t) get_set.TP_fec;
 		}

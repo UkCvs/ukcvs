@@ -42,7 +42,7 @@ class CScanSetup : public CMenuTarget, CChangeObserver
 		uint provider_list_size;
 
 		std::string scan_mode_string;
-
+		
 		int showScanService();
 		int showScanModeMenue();
 
@@ -72,15 +72,21 @@ class CSatDiseqcNotifier : public CChangeObserver
 		bool changeNotify(const neutrino_locale_t, void * Data);
 };
 
+class CCableRegionNotifier : public CChangeObserver
+{
+	public:
+		bool changeNotify(const neutrino_locale_t, void * data);
+};
+
 class CTP_scanNotifier : public CChangeObserver
 {
 	private:
-		CMenuOptionChooser* toDisable1[3];
+		CMenuOptionChooser* toDisable1[2];
 		CMenuForwarder* toDisable2[3];
-		CMenuOptionStringChooser* toDisable3[1];		
+		CMenuOptionStringChooser* toDisable3[2];		
 		std::string* scan_mode_string;
 	public:
-		CTP_scanNotifier(CMenuOptionChooser* i1, CMenuOptionChooser* i2, CMenuOptionChooser* i3, CMenuForwarder* i4, CMenuForwarder* i5, CMenuForwarder* i6, CMenuOptionStringChooser* i7, std::string &s);
+		CTP_scanNotifier(CMenuOptionChooser* i1, CMenuOptionChooser* i2, CMenuForwarder* i3, CMenuForwarder* i4, CMenuForwarder* i5, CMenuOptionStringChooser* i6, CMenuOptionStringChooser* i7, std::string &s);
 		bool changeNotify(const neutrino_locale_t, void *);
 };
 

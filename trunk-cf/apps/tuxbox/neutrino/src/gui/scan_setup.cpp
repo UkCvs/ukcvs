@@ -51,10 +51,12 @@
 
 #include <driver/screen_max.h>
 
+#include <xmltree/xmlinterface.h>
+
 #include <system/debug.h>
 
 #define scanSettings (CNeutrinoApp::getInstance()->ScanSettings())
-
+#define CABLES_LOCALE "/var/etc/cables_locale.xml"
 
 CZapitClient::SatelliteList satList;
 
@@ -200,14 +202,6 @@ const CMenuOptionChooser::keyval OPTIONS_EAST0_WEST1_OPTIONS[OPTIONS_EAST0_WEST1
 {
 	{ 0, LOCALE_SATSETUP_EAST },
 	{ 1, LOCALE_SATSETUP_WEST }
-};
-
-#define SCANTP_RATE_OPTION_COUNT 3
-const CMenuOptionChooser::keyval SCANTP_RATE_OPTIONS[SCANTP_RATE_OPTION_COUNT] =
-{
-	{ 6887,	LOCALE_SCANTP_RATE_6887 },
-	{ 6952,	LOCALE_SCANTP_RATE_6952 },
-	{ 6875,	LOCALE_SCANTP_RATE_6875 }
 };
 
 int CScanSetup::showScanService()
@@ -439,13 +433,10 @@ int CScanSetup::showScanModeMenue()
 	CMenuWidget* scanmode = new CMenuWidget(LOCALE_SERVICEMENU_SCANTS, NEUTRINO_ICON_SETTINGS, width);
 
 	//prepare input signal rate
-	CStringInput rate(LOCALE_SCANTP_RATE, (char *) scanSettings.TP_rate, 8, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789 ");
+	CStringInput rate(LOCALE_SCANTP_RATE, (char *) scanSettings.TP_rate, (g_info.delivery_system != DVB_C) ? 8 : 7, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789 ");
 
 	//prepare input netid
 	CStringInput* netid = new CStringInput(LOCALE_SCANTP_NETID, (char *) scanSettings.netid, 5, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789 ");
-
-	//prepare symrate select
-	CMenuOptionChooser* symrate = new CMenuOptionChooser(LOCALE_SCANTP_RATE, (int *)&scanSettings.symrate, SCANTP_RATE_OPTIONS, SCANTP_RATE_OPTION_COUNT, scanSettings.TP_scan == 1);
 
 	//prepare fec select
 	CMenuOptionChooser* fec = new CMenuOptionChooser(LOCALE_SCANTP_FEC, (int *)&scanSettings.TP_fec, SATSETUP_SCANTP_FEC, SATSETUP_SCANTP_FEC_COUNT, scanSettings.TP_scan == 1);
@@ -461,14 +452,44 @@ int CScanSetup::showScanModeMenue()
 	} 
 	else // cable
 	{
-		freq = new CStringInput(LOCALE_SCANTP_FREQ, (char *) scanSettings.TP_freq, 6, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789 ");
+		freq = new CStringInput(LOCALE_SCANTP_FREQ, (char *) scanSettings.TP_freq, 9, NONEXISTANT_LOCALE, NONEXISTANT_LOCALE, "0123456789 ");
 		pol_mod = new CMenuOptionChooser(LOCALE_SCANTP_MOD, (int *)&scanSettings.TP_mod, CABLESETUP_SCANTP_MOD, CABLESETUP_SCANTP_MOD_COUNT, scanSettings.TP_scan == 1);
 	}
 
-		//prepare forwarders rate/freq/netid
+	//prepare forwarders rate/freq/netid
 	CMenuForwarder *Rate = new CMenuForwarder(LOCALE_SCANTP_RATE, scanSettings.TP_scan == 1, scanSettings.TP_rate, &rate);
 	CMenuForwarder *Freq = new CMenuForwarder(LOCALE_SCANTP_FREQ, scanSettings.TP_scan == 1, scanSettings.TP_freq, freq);
 	CMenuForwarder *Netid = new CMenuForwarder(LOCALE_SCANTP_NETID, scanSettings.TP_scan == 1, scanSettings.netid, netid);
+
+	//cable-region-settings
+	CMenuOptionStringChooser * CableRegion = NULL;
+	if(g_info.delivery_system == DVB_C)
+	{
+		CableRegion = new CMenuOptionStringChooser(LOCALE_CABLEREGION_OPTION, (char*)&scanSettings.cable_region, scanSettings.TP_scan == 1, new CCableRegionNotifier(), CRCInput::RC_nokey, "", true, true);
+		xmlDocPtr parser = parseXmlFile(CABLES_LOCALE);
+		if (parser != NULL)
+		{
+			std::string name;
+			bool name_found = false;
+			xmlNodePtr search = xmlDocGetRootElement(parser)->xmlChildrenNode;
+			while (search)
+			{
+				if (!strcmp(xmlGetName(search), "transponder"))
+				{
+					name = xmlGetAttribute(search, "name");
+					dprintf(DEBUG_DEBUG, "[scan-setup] CABLE REGION: %s\n", name.c_str());
+
+					if (!name_found && strcmp(scanSettings.cable_region, name.c_str()) == 0)
+						name_found = true;
+					
+					CableRegion->addOption(name.c_str());
+				}
+				search = search->xmlNextNode;
+			}
+			if (!name_found)
+				snprintf(scanSettings.cable_region, sizeof(scanSettings.cable_region), "%s", name.c_str());
+		}
+	}
 
 	//sat-lnb-settings
 	CMenuOptionStringChooser* TP_SatSelectMenu = NULL;
@@ -500,7 +521,7 @@ int CScanSetup::showScanModeMenue()
 		}
 	}
 
-	CTP_scanNotifier TP_scanNotifier(fec, pol_mod, symrate, Netid, Freq, Rate, TP_SatSelectMenu, scan_mode_string);
+	CTP_scanNotifier TP_scanNotifier(fec, pol_mod, Freq, Rate, Netid, TP_SatSelectMenu, CableRegion, scan_mode_string);
 	CMenuOptionChooser* scan;
 	if(g_info.delivery_system != DVB_C) {
 		scan = new CMenuOptionChooser(LOCALE_SCANTP_SCAN, (int *)&scanSettings.TP_scan, SCANTS_SCAN_OPTIONS, SCANTS_SCAN_OPTION_COUNT, true/*(g_info.delivery_system != DVB_C)*/, &TP_scanNotifier);
@@ -515,6 +536,7 @@ int CScanSetup::showScanModeMenue()
 	if(g_info.delivery_system == DVB_C)
 	{
 		scanmode->addItem(GenericMenuSeparatorLine);
+		scanmode->addItem(CableRegion);
 		scanmode->addItem(Netid);
   	}
 	else
@@ -522,14 +544,9 @@ int CScanSetup::showScanModeMenue()
 
 	//show items for scanmode submenue
 	scanmode->addItem(Freq);
-	if(g_info.delivery_system == DVB_C)	
-		scanmode->addItem(symrate);
-	else
-	{
-		scanmode->addItem(pol_mod);
-		scanmode->addItem(Rate);
-		scanmode->addItem(fec);
-	}
+	scanmode->addItem(pol_mod);
+	scanmode->addItem(Rate);
+	scanmode->addItem(fec);
 
 	int res = scanmode->exec(NULL, "");
 	delete scanmode;
@@ -591,6 +608,54 @@ std::string CScanSetup::getScanModeString(const int& scan_type)
 		return g_Locale->getText(SCANTS_CABLESCAN_OPTIONS[st].value);
 }
 
+bool CCableRegionNotifier::changeNotify(const neutrino_locale_t, void * Data)
+{
+	bool found = false;
+	int TP_mod, TP_fec; 
+	std::string cable_region, netid, TP_freq, TP_rate;
+					
+	dprintf(DEBUG_DEBUG, "CCableRegionNotifier: %s\n", (char *) Data);
+
+	xmlDocPtr parser = parseXmlFile(CABLES_LOCALE);
+	if (parser != NULL) {
+		xmlNodePtr locale = xmlDocGetRootElement(parser)->xmlChildrenNode;
+		while (locale) {
+			if (!strcmp(xmlGetName(locale), "transponder")) {
+				cable_region = xmlGetAttribute(locale, "name");
+				if(!strcmp(scanSettings.cable_region, cable_region.c_str())) {
+					netid = xmlGetAttribute(locale, "netid");
+					TP_freq = xmlGetAttribute(locale, "frequency");
+					TP_rate = xmlGetAttribute(locale, "symbol_rate");
+					TP_mod = xmlGetNumericAttribute(locale, "modulation", 0);
+					TP_fec = xmlGetNumericAttribute(locale, "fec_inner", 0);
+					found = true;
+					break;
+				}
+			}
+			locale = locale->xmlNextNode;
+		}
+		xmlFreeDoc(parser);
+	}
+
+	if(found)
+	{
+		snprintf(scanSettings.netid, sizeof(scanSettings.netid), "%s", netid.c_str());
+		snprintf(scanSettings.TP_freq, sizeof(scanSettings.TP_freq), "%s", TP_freq.c_str());
+		snprintf(scanSettings.TP_rate, sizeof(scanSettings.TP_rate), "%s", TP_rate.c_str());
+		scanSettings.TP_mod = TP_mod;
+		scanSettings.TP_fec = TP_fec;
+
+		dprintf(DEBUG_DEBUG, "Set Cable Region: %s -> %s,%s,%s,%d,%d\n",
+			cable_region.c_str(),
+			netid.c_str(),
+			TP_freq.c_str(),
+			TP_rate.c_str(),
+			TP_mod,
+			TP_fec);
+	}
+	return true;
+}
+
 bool CScanSetup::changeNotify(const neutrino_locale_t OptionName, void * Data)
 {
 	if (ARE_LOCALES_EQUAL(OptionName, LOCALE_SATSETUP_SATELLITE))
@@ -641,15 +706,18 @@ bool CSatDiseqcNotifier::changeNotify(const neutrino_locale_t, void * Data)
 	return false;
 }
 
-CTP_scanNotifier::CTP_scanNotifier(CMenuOptionChooser* i1, CMenuOptionChooser* i2, CMenuOptionChooser* i3, CMenuForwarder* i4, CMenuForwarder* i5, CMenuForwarder* i6, CMenuOptionStringChooser* i7, std::string &s)
+CTP_scanNotifier::CTP_scanNotifier(CMenuOptionChooser* i1, CMenuOptionChooser* i2, CMenuForwarder* i3, CMenuForwarder* i4, CMenuForwarder* i5, CMenuOptionStringChooser* i6, CMenuOptionStringChooser* i7, std::string &s)
 {
 	toDisable1[0]=i1;
 	toDisable1[1]=i2;
-	toDisable1[2]=i3;
-	toDisable2[0]=i4;
-	toDisable2[1]=i5;
-	toDisable2[2]=i6;
-	toDisable3[0]=i7;
+	
+	toDisable2[0]=i3;
+	toDisable2[1]=i4;
+	toDisable2[2]=i5;
+
+	toDisable3[0]=i6;
+	toDisable3[1]=i7;
+
 	scan_mode_string = &s;
 }
 
@@ -661,17 +729,18 @@ bool CTP_scanNotifier::changeNotify(const neutrino_locale_t, void *Data)
 	if ((*((int*) Data) == CScanTs::SCAN_COMPLETE) || (*((int*) Data) == CScanTs::SCAN_ONE_SAT))
 		set_true_false = false;
 
-	for (int i=0; i<3; i++)
+	for (int i=0; i<2; i++)
 	{
 		if (toDisable1[i]) toDisable1[i]->setActive(set_true_false);
 		if (toDisable2[i]) toDisable2[i]->setActive(set_true_false);
+		if (toDisable3[i]) toDisable3[i]->setActive(set_true_false);
 	}
 
-	if (toDisable3[0]) {
+	if (toDisable2[2]) {
 		if (*((int*) Data) == CScanTs::SCAN_COMPLETE)
-			toDisable3[0]->setActive(false);
+			toDisable2[2]->setActive(false);
 		else
-			toDisable3[0]->setActive(true);
+			toDisable2[2]->setActive(true);
 	}
 
 	if (g_info.delivery_system == DVB_S)

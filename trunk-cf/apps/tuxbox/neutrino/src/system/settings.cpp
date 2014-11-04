@@ -38,7 +38,6 @@ CScanSettings::CScanSettings(void)
 	delivery_system = DVB_S;
 	bouquetMode	= CZapitClient::BM_CREATEBOUQUETS;
 	scanType	= CZapitClient::ST_TVRADIO;
-	symrate		= 6952;
 	strcpy(satNameNoDiseqc, "none");
 
 	for( int i = 0; i < MAX_SATELLITES; i++)
@@ -251,10 +250,10 @@ bool CScanSettings::loadSettings(const char * const fileName, const delivery_sys
 		strcpy(TP_freq, configfile.getString("TP_freq", "10100000").c_str());
 		strcpy(TP_rate, configfile.getString("TP_rate", "27500000").c_str());
 	} else {
+		strncpy(cable_region, configfile.getString("cable_region", "Knowsley 1").c_str(), 40);
 		strcpy(TP_freq, configfile.getString("TP_freq", "595000000").c_str());
-		strcpy(TP_rate, configfile.getString("TP_rate", "6875000").c_str());
+		strcpy(TP_rate, configfile.getString("TP_rate", "6952000").c_str());
 		strcpy(netid, configfile.getString("netid", "40965").c_str());
-		symrate = configfile.getInt32("symrate", 6952);
 	}
 	strncpy(TP_satname, configfile.getString("TP_satname", "").c_str(), 30);
 	TP_diseqc = *diseqscOfSat(TP_satname);
@@ -322,8 +321,8 @@ bool CScanSettings::saveSettings(const char * const fileName)
 	configfile.setString("TP_freq", TP_freq);
 	configfile.setString("TP_rate", TP_rate);
 	configfile.setString("TP_satname", TP_satname);
+	configfile.setString("cable_region", cable_region);
 	configfile.setString("netid", netid);
-	configfile.setInt32("symrate", symrate);
 
 	configfile.setInt32("scanSectionsd",scanSectionsd );
 
