@@ -1,5 +1,5 @@
 #!/bin/bash
-# UkCvs.net - project "CableFerret" dm500 build script for Ubuntu LTS - 8th Oct 2014
+# UkCvs.net - "Cable Ferret Project" dm500 build script for Ubuntu LTS 32bit - 04th Nov 2014
 
 buildstart=`date +%s`
 CURRENT_PATH=`pwd`
@@ -34,7 +34,7 @@ for i in Archive dreambox; do
 done
 
 dialog \
---clear --cancel-label "Exit" --backtitle "UkCvs.net CableFerret Build Script - dm500" \
+--clear --cancel-label "Exit" --backtitle "UkCvs.net Cable Ferret Project Build Script - dm500" \
 --colors --title "\Z4 [ PLEASE CHOOSE AN OPTION ] \Zn" \
 --menu "\n  Please select what type of image to build \n\n\
  You can use the UP/DOWN arrow navigation keys\n\
@@ -75,7 +75,7 @@ elif [ $buildenv = "Update" ]; then
 	svn up
 elif [ $buildenv = "Create" ] || [ $buildenv = "Modify" ]; then
 	echo "using the local build environment"; echo
-	echo "Display Information for CableFerret online and local environment";echo
+	echo "Display Information for Cable Ferret Project online and local environment";echo
 	svn info https://subversion.assembla.com/svn/ukcvs/trunk-cf $CURRENT_PATH
 	sleep 10
 else
@@ -117,29 +117,35 @@ fi
 	--enable-freesatepg \
 	--enable-upnp
 
-make flash-neutrino-squashfs
+make flash-neutrino-squashfs 2>$CURRENT_PATH/buildlog.txt
 
-builddate=`date +%Y%m%d-%H%M%S`
+builddate=`date +%Y%m%d-%H%M`
 buildstop=$(expr `date +%s` - $buildstart)
 buildhour=$(expr $buildstop / 3600)
 buildstop=$(expr $buildstop % 3600)
 buildmins=$(expr $buildstop / 60)
 buildsecs=$(expr $buildstop % 60)
 
-if [ -f $CURRENT_PATH/dreambox/cdkflash/complete-neutrino.img ]; then
-	cp $CURRENT_PATH/dreambox/cdkflash/complete-neutrino.img \
-	   $CURRENT_PATH/ukcvs-cableferret-dm500-$builddate.img
+cd $CURRENT_PATH
+revision=$(svn info | grep '^Revision' | cut -d ' ' -f2)
+
+if [ -f dreambox/cdkflash/complete-neutrino.img ]; then
+	buildfile="ukcvs-cfp-dm500-$builddate-r$revision.img"
+	cp dreambox/cdkflash/complete-neutrino.img $buildfile
+	md5sum -b $buildfile > MD5SUM
+	rm -f ukcvs-cfp-dm500-r$revision.zip
+	zip -j ukcvs-cfp-dm500-r$revision.zip $buildfile MD5SUM
 	dialog \
-	--clear --backtitle "UkCvs.net CableFerret Build Script - dm500" \
-	--colors --title "\Z4[ $buildenv Build Finished ]\Zn" \
-	--msgbox "ukcvs-cableferret-dm500-$builddate.img\n\n
-	`date`\nTotal Time: $buildhour hours $buildmins mins $buildsecs secs\n" 8 48
+	--clear --backtitle "UkCvs.net Cable Ferret Project Build Script - dm500" \
+	--colors --title "\Z4[ Revision:$revision $buildenv Build Finished ]\Zn" \
+	--msgbox "ukcvs-cfp-dm500-$builddate-r$revision.img\n\n
+	`date`\nTotal Time: $buildhour hours $buildmins mins $buildsecs secs\n" 8 52
 else
 	dialog \
-	--clear --backtitle "UkCvs.net CableFerret Build Script - dm500" \
-	--colors --title "\Z4[ $buildenv Build Finished ]\Zn" \
+	--clear --backtitle "UkCvs.net Cable Ferret Project Build Script - dm500" \
+	--colors --title "\Z4[ Revision:$revision $buildenv Build Finished ]\Zn" \
 	--msgbox " ERROR: Build failed to create an image\n\n
-	`date`\n Total Time: $buildhour hours $buildmins mins $buildsecs secs\n" 8 48
+	`date`\n Total Time: $buildhour hours $buildmins mins $buildsecs secs\n" 8 52
 fi
 echo
 
