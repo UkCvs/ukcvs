@@ -234,8 +234,8 @@ bool CScanSettings::loadSettings(const char * const fileName, const delivery_sys
 		}
 	}
 	scan_mode = configfile.getInt32("scan_mode", 0);
-	TP_scan = configfile.getInt32("TP_scan", 0);
-	TP_fec = configfile.getInt32("TP_fec", 1);
+	TP_scan = configfile.getInt32("TP_scan", 1);
+	TP_fec = configfile.getInt32("TP_fec", 3);
 	TP_pol = configfile.getInt32("TP_pol", 0);
 #ifdef HAVE_TRIPLEDRAGON
 	TP_mod = configfile.getInt32("TP_mod", 0); // dummy
@@ -243,7 +243,7 @@ bool CScanSettings::loadSettings(const char * const fileName, const delivery_sys
 	TP_mod = configfile.getInt32("TP_mod", QAM_AUTO); // default qam auto
 #else
 	// i do not know how to do it correctly for old API -- seife
-	TP_mod = configfile.getInt32("TP_mod", QAM_256); // default qam 256
+	TP_mod = configfile.getInt32("TP_mod", QAM_64); // default qam 64 for 40965 Knowsley 1
 #endif
 
 	if(delivery_system != DVB_C) {
