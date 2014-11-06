@@ -250,7 +250,7 @@ bool CScanSettings::loadSettings(const char * const fileName, const delivery_sys
 		strcpy(TP_freq, configfile.getString("TP_freq", "10100000").c_str());
 		strcpy(TP_rate, configfile.getString("TP_rate", "27500000").c_str());
 	} else {
-		strncpy(cable_region, configfile.getString("cable_region", "Knowsley 1").c_str(), 40);
+		strncpy(cable_region, configfile.getString("cable_region", "40965 Knowsley 1").c_str(), 40);
 		strcpy(TP_freq, configfile.getString("TP_freq", "595000000").c_str());
 		strcpy(TP_rate, configfile.getString("TP_rate", "6952000").c_str());
 		strcpy(netid, configfile.getString("netid", "40965").c_str());
