@@ -218,8 +218,10 @@ bouquetlist.bouquetselect Bouquet select
 bouquetlist.head Bouquets
 cableregion.option Region
 cablesetup.provider cable provider
+camdmenu.camddetect_hint Detecting SoftCams...
 camdmenu.camdmenu Softcam Menu
 camdmenu.camdreset Camd Reset
+camdmenu.camdreset_hint Please wait, Softcam is restarting...
 camdmenu.camdversion Softcam Version
 camdmenu.cccam CCcam
 camdmenu.cccamstart CCcam Start

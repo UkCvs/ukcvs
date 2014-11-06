@@ -167,7 +167,7 @@ void CamdAuswahl::Settings()
 	FILE* fdnewcamd_installed = fopen("/var/bin/emu/newcamd", "r");
 	FILE* fdCCcam_installed = fopen("/var/bin/emu/CCcam", "r");
 
-	CHintBox * CamdDetectionBox = new CHintBox(LOCALE_CAMDMENU_CAMDMENU, "Detecting SoftCams...");
+	CHintBox * CamdDetectionBox = new CHintBox(LOCALE_CAMDMENU_CAMDMENU,  g_Locale->getText(LOCALE_CAMDMENU_CAMDDETECT_HINT));
 	CamdDetectionBox->paint();
 
 	//oscam
@@ -346,7 +346,7 @@ bool CamdAuswahl::CamdReset()
 		fclose(fdCCcam);
 	}
 
-	CHintBox * CamdResetBox = new CHintBox(LOCALE_CAMDMENU_CAMDRESET, "Please wait, Softcam is restarting...");
+	CHintBox * CamdResetBox = new CHintBox(LOCALE_CAMDMENU_CAMDRESET, g_Locale->getText(LOCALE_CAMDMENU_CAMDRESET_HINT));
 	CamdResetBox->paint();
 
 	/* stop cams
