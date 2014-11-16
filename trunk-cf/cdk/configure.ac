@@ -1949,6 +1949,7 @@ root_dream/var_init/etc/Makefile
 root_dream/var_init/etc/init.d/Makefile
 root_dream/var_init/etc/network/Makefile
 root_dream/var_init/keys/Makefile
+root_dream/var_init/lib/Makefile
 root_dream/var_init/spool/Makefile
 root_dream/var_init/spool/cron/Makefile
 root_dream/var_init/spool/cron/crontabs/Makefile
