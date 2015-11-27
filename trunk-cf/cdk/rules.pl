@@ -46,7 +46,7 @@ sub process_make_depends (@)
 
   foreach ( @_ )
   {
-    if ( $_ =~ m#\.(diff|tar)\.(bz2|gz)$# )
+    if ( $_ =~ m#\.(diff|tar)\.(bz2|gz|xz)$# )
     {
       $output .= "\\\$(archivedir)/" . $_ . " ";
     }
@@ -116,6 +116,10 @@ sub process_make_prepare (@)
       {
 	$output .= "gunzip -cd \\\$(archivedir)/" . $_[1] . " | TAPE=- tar -x";
       }
+      elsif ( $_[1] =~ m#\.xz$# )
+      {
+	$output .= "xz -cd \\\$(archivedir)/" . $_[1] . " | TAPE=- tar -x";
+      }
       elsif ( $_[1] =~ m#\.tgz$# )
       {
 	$output .= "gunzip -cd \\\$(archivedir)/" . $_[1] . " | TAPE=- tar -x";
@@ -145,6 +149,10 @@ sub process_make_prepare (@)
       elsif ( $_[1] =~ m#\.tar\.gz$# )
       {
 	$output .= "gunzip -cd \\\$(archivedir)/" . $_[1] . " | tar -x";
+      }
+      elsif ( $_[1] =~ m#\.xz$# )
+      {
+	$output .= "xz -cd \\\$(archivedir)/" . $_[1] . " | tar -x";
       }
       elsif ( $_[1] =~ m#\.exe$# )
       {
