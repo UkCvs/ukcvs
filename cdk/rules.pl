@@ -46,7 +46,7 @@ sub process_make_depends (@)
 
   foreach ( @_ )
   {
-    if ( $_ =~ m#\.(diff|tar)\.(bz2|gz)$# )
+    if ( $_ =~ m#\.(diff|tar)\.(bz2|gz|xz)$# )
     {
       $output .= "\\\$(archivedir)/" . $_ . " ";
     }
@@ -67,6 +67,10 @@ sub process_make_depends (@)
       $output .= "\\\$(archivedir)/" . $_ . " ";
     }
     elsif ( $_ =~ m#\.zip$# )
+    {
+      $output .= "\\\$(archivedir)/" . $_ . " ";
+    }
+    elsif ( $_ =~ m#\.rpm$# )
     {
       $output .= "\\\$(archivedir)/" . $_ . " ";
     }
@@ -112,6 +116,10 @@ sub process_make_prepare (@)
       {
 	$output .= "gunzip -cd \\\$(archivedir)/" . $_[1] . " | TAPE=- tar -x";
       }
+      elsif ( $_[1] =~ m#\.xz$# )
+      {
+	$output .= "xz -cd \\\$(archivedir)/" . $_[1] . " | TAPE=- tar -x";
+      }
       elsif ( $_[1] =~ m#\.tgz$# )
       {
 	$output .= "gunzip -cd \\\$(archivedir)/" . $_[1] . " | TAPE=- tar -x";
@@ -142,9 +150,17 @@ sub process_make_prepare (@)
       {
 	$output .= "gunzip -cd \\\$(archivedir)/" . $_[1] . " | tar -x";
       }
+      elsif ( $_[1] =~ m#\.xz$# )
+      {
+	$output .= "xz -cd \\\$(archivedir)/" . $_[1] . " | tar -x";
+      }
       elsif ( $_[1] =~ m#\.exe$# )
       {
 	$output .= "cabextract \\\$(archivedir)/" . $_[1];
+      }
+      elsif ( $_[1] =~ m#\.rpm$# )
+      {
+	$output .= "rpm2cpio \\\$(archivedir)/" . $_[1] . " | cpio --extract --unconditional --preserve-modification-time --make-directories --no-absolute-filenames";
       }
       else
       {
