@@ -54,7 +54,7 @@ squashfs2.2r2.tar.gz;http://prdownloads.sourceforge.net/sourceforge/squashfs
 # contrib libs
 #
 openssl-0.9.7e.tar.gz;ftp://ftp.openssl.org/source/old/0.9.x
-curl-7.10.1.tar.gz;http://curl.haxx.se/download/archeology
+curl-7.10.1.tar.gz;http://curl.askapache.com/download/archeology;http://curl.haxx.se/download/archeology
 curl-7.19.7.tar.bz2;http://curl.haxx.se/download
 freetype-2.0.9.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/freetype
 freetype-2.1.4.tar.bz2;http://prdownloads.sourceforge.net/sourceforge/freetype
