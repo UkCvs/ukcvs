@@ -28,7 +28,7 @@ while ( <RULES> )
         $output .= "wget -t 2 -T 10 -c -P \$(archivedir) " . $_ . "/" . $file . " || \\\n\t";
       }
     }
-    $output .= "wget -c -P \$(archivedir) http://www.dbox2-tuning.net/cvsdata/files/" . $file . " )";
+    $output .= "wget -c -P \$(archivedir) http://www.i-have-a-dreambox.com/Archive/" . $file . " )";
     $output .= "\n\t\@touch \$\@";
     $output .= "\n\n";
   }
