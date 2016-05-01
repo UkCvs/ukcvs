@@ -977,7 +977,7 @@ AC_ARG_WITH(hostappsdir,
 AC_ARG_WITH(gnuserver,
         [  --with-gnuserver=ADDRESS
                           the gnu server for gnu-stuff (without ftp://)],
-        [gnuserver="$with_gnuserver"],[gnuserver=ftp.gwdg.de/pub/misc/gnu/ftp/gnu])
+        [gnuserver="$with_gnuserver"],[gnuserver=ftp.gwdg.de/pub/gnu/ftp/gnu])
 
 AC_ARG_WITH(defaultserver,
         [  --with-defaultserver=ADDRESS
