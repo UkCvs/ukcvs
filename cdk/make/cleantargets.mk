@@ -94,7 +94,7 @@ distclean-local:
 	-$(MAKE) -C $(appsdir)/misc/tools distclean
 	-$(MAKE) -C $(hostappsdir) distclean
 	-$(MAKE) -C $(appsdir)/tuxbox/tools/hotplug distclean
-	-$(MAKE) -C $(driverdir) distclean KERNEL_LOCATION=$(buildprefix)/linux
+	-$(MAKE) -C $(driverdir) KERNEL_LOCATION=$(buildprefix)/linux distclean
 	-rm -f Makefile-archive
 	-rm -f rules-downcheck.pl
 	-rm -f linux
